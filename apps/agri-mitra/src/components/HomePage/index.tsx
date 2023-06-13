@@ -7,10 +7,6 @@ import React, {
   useState,
 } from "react";
 import { NextPage } from "next";
-import axios from "axios";
-//@ts-ignore
-import { analytics } from "../../utils/firebase";
-import { logEvent } from "firebase/analytics";
 import Menu from "../menu";
 import { getInitialMsgs } from "../../utils/textUtility";
 import { AppContext } from "../../context";
@@ -47,8 +43,6 @@ const HomePage: NextPage = () => {
   }, [t, context?.locale, flags]);
 
   useEffect(() => {
-    //@ts-ignore
-    logEvent(analytics, "Home_page");
 
     context?.fetchIsDown(); // check if server is down
 

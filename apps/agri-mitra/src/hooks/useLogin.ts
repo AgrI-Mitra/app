@@ -4,8 +4,6 @@ import { useCookies } from 'react-cookie';
 import jwt from 'jsonwebtoken';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
-import { analytics } from '../utils/firebase';
-import { logEvent } from 'firebase/analytics';
 
 type User = {
   username: string;
@@ -44,10 +42,6 @@ export const useLogin = () => {
             }
           })
           .catch((err) => {
-            //@ts-ignore
-            logEvent(analytics, 'console_error', {
-              error_message: err.message,
-            });
             removeCookie('access_token', { path: '/' });
             localStorage.clear();
             sessionStorage.clear();

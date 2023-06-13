@@ -4,8 +4,6 @@ import { NextRouter, useRouter } from "next/router";
 import { useCookies } from "react-cookie";
 import styles from "./OTP.module.css";
 import { useLocalization } from "../../hooks";
-import { logEvent, setUserId } from "firebase/analytics";
-import { analytics } from "../../utils/firebase";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { FormattedMessage } from "react-intl";
@@ -77,8 +75,6 @@ const OTPpage: React.FC = () => {
             //@ts-ignore
             localStorage.setItem("userID", decodedToken?.sub);
             localStorage.setItem("auth", data.result.data.user.token);
-            // @ts-ignore
-            setUserId(analytics, localStorage.getItem("userID"));
 
             context?.setIsMobileAvailable(true);
             setTimeout(() => {
@@ -91,10 +87,6 @@ const OTPpage: React.FC = () => {
         })
         .catch((err) => {
           console.log(err)
-          //@ts-ignore
-          logEvent(analytics, 'console_error', {
-            error_message: err.message,
-          });
         }
         );
     }
@@ -152,10 +144,6 @@ const OTPpage: React.FC = () => {
       }
     } catch (error) {
       toast.error(`${t("error.error.sending_otp")}`);
-      //@ts-ignore
-      logEvent(analytics, 'console_error', {
-        error_message: error.message,
-      });
     }
 
     return () => {
@@ -164,11 +152,6 @@ const OTPpage: React.FC = () => {
       }
     };
   }, [isResendingOTP, router.query.state, countdownIntervalId, t]);
-
-  useEffect(() => {
-    //@ts-ignore
-    logEvent(analytics, "OTP_page");
-  }, []);
 
   return (
     <div className={styles.main}>

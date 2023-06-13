@@ -22,8 +22,6 @@ import React, {
 import { toast } from 'react-hot-toast';
 
 import styles from './index.module.css';
-import { analytics } from '../../utils/firebase';
-import { logEvent } from 'firebase/analytics';
 import RightIcon from '../../assets/icons/right.jsx';
 import CopyText from '../../assets/icons/copy-text.svg';
 import MsgThumbsUp from '../../assets/icons/msg-thumbs-up.jsx';
@@ -76,10 +74,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
           }
         })
         .catch((error: any) => {
-          //@ts-ignore
-          logEvent(analytics, 'console_error', {
-            error_message: error.message,
-          });
+          console.error(error);
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

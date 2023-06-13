@@ -10,9 +10,6 @@ import RightIcon from '../../assets/icons/right.jsx';
 import Image from 'next/image';
 import { useCookies } from 'react-cookie';
 import Menu from '../menu';
-//@ts-ignore
-import { analytics } from '../../utils/firebase';
-import { logEvent } from 'firebase/analytics';
 import { useLocalization } from '../../hooks';
 import { AppContext } from '../../context';
 
@@ -27,16 +24,9 @@ const MorePage: React.FC = () => {
     localStorage.clear();
     sessionStorage.clear();
     context?.setMessages([]);
-    //@ts-ignore
-    logEvent(analytics, 'Logout_pressed');
     router.push('/login');
     if(typeof window !== "undefined") window.location.reload();
   }
-
-  useEffect(() => {
-    //@ts-ignore
-    logEvent(analytics, 'More_page');
-  }, []);
 
   const [welcome, profile, faqs, feedback, logoutLabel,more] =useMemo(()=>[t('label.welcome'),t('label.profile'),t('label.faqs'),t('label.feedback'),t('label.logout'),t('label.more')],[t])
   return (

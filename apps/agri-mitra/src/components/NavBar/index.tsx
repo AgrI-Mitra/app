@@ -1,8 +1,8 @@
 import { useState, useContext, useCallback } from 'react';
 import styles from './index.module.css';
 import PhoneImg from '../../assets/images/phone.png';
-import GovtOfOdisha from '../../assets/images/logo-green.png';
-import KrushakOdisha from '../../assets/images/krushak_odisha.png';
+import MOA from '../../assets/images/logo.jpg';
+import Emblem from '../../assets/images/emblem.png';
 import plusIcon from '../../assets/icons/plus.svg';
 import shareIcon from '../../assets/icons/share.svg';
 import downloadIcon from '../../assets/icons/download.svg';
@@ -49,40 +49,40 @@ function NavBar() {
     router.push('/');
   }, [context, t]);
 
-  // if (router.pathname === '/chat' && !context?.isDown) {
-  //   return (
-  //     <div className={styles.navbar2}>
-  //       <div className={styles.newChatContainer}>
-  //         <div
-  //           onClick={() => newChatHandler()}
-  //           className={styles.iconContainer}>
-  //           <Image src={plusIcon} alt="plusIcon" layout="responsive" />
-  //         </div>
-  //         {t("label.new_chat")}
-  //       </div>
-  //       <div className={styles.rightSideIcons}>
-  //         {flags?.show_share_button?.enabled && (
-  //           <div className={styles.iconContainer}>
-  //             <Image src={shareIcon} alt="shareIcon" layout="responsive" />
-  //           </div>
-  //         )}
-  //         {flags?.show_download_button?.enabled && (
-  //           <div className={styles.iconContainer}>
-  //             <Image
-  //               src={downloadIcon}
-  //               alt="downloadIcon"
-  //               layout="responsive"
-  //             />
-  //           </div>
-  //         )}
-  //       </div>
-  //     </div>
-  //   );
-  // } else
+  if (router.pathname === '/chat' && !context?.isDown) {
+    return (
+      <div className={styles.navbar2}>
+        <div className={styles.newChatContainer}>
+          <div
+            onClick={() => newChatHandler()}
+            className={styles.iconContainer}>
+            <Image src={plusIcon} alt="plusIcon" layout="responsive" />
+          </div>
+          {t("label.new_chat")}
+        </div>
+        <div className={styles.rightSideIcons}>
+          {flags?.show_share_button?.enabled && (
+            <div className={styles.iconContainer}>
+              <Image src={shareIcon} alt="shareIcon" layout="responsive" />
+            </div>
+          )}
+          {flags?.show_download_button?.enabled && (
+            <div className={styles.iconContainer}>
+              <Image
+                src={downloadIcon}
+                alt="downloadIcon"
+                layout="responsive"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  } else
     return (
       <div className={styles.navbar}>
         <div>
-          <button
+          {/* <button
             id="eng"
             className={isEngActive ? styles.active : ''}
             style={{ borderRadius: '10px 0px 0px 10px' }}
@@ -95,12 +95,12 @@ function NavBar() {
             style={{ borderRadius: '0px 10px 10px 0px' }}
             onClick={toggleLanguage('or')}>
             ଓଡ଼ିଆ
-          </button>
+          </button> */}
         </div>
         <div className={styles.imageContainer}>
           <Image src={PhoneImg} alt="" width={60} height={60} />
-          <Image src={KrushakOdisha} alt="" width={60} height={60} />
-          <Image src={GovtOfOdisha} alt="" width={70} height={70} />
+          <Image src={MOA} alt="" width={60} height={60} />
+          <Image src={Emblem} alt="" width={45} height={60} />
         </div>
       </div>
     );
