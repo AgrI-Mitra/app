@@ -65,7 +65,7 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
   useEffect(() => {
     if (data && base) {
       handleCompute();
-      setData();
+      // setData();
       setBase();
     }
   }, [data, handleCompute, base]);
@@ -115,60 +115,58 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
   }, [model_id_1, model_id_2]);
 
   const makeComputeAPICall = async (type) => {
-    if (!(localStorage.getItem('locale') === 'en')) {
+    console.log('hello');
+    const url =
+      'https://api.dhruva.ai4bharat.org/services/inference/asr?serviceId=ai4bharat%2Fconformer-multilingual-indo_aryan-gpu--t4';
+    const headers = {
+      'Content-Type': 'application/json',
+      authorization: process.env.NEXT_PUBLIC_DHRUVA_AUTH,
+    };
 
-      const url =
-        'https://api.dhruva.ai4bharat.org/services/inference/asr?serviceId=ai4bharat%2Fconformer-multilingual-indo_aryan-gpu--t4';
-      const headers = {
-        'Content-Type': 'application/json',
-        authorization: process.env.NEXT_PUBLIC_DHRUVA_AUTH,
-      };
-
-      const data = {
-        config: {
-          language: {
-            sourceLanguage: 'hi',
-          },
+    const data = {
+      config: {
+        language: {
+          sourceLanguage: 'hi',
         },
-        audio: [
-          {
-            audioContent: base.split('base64,')[1],
-          },
-        ],
-      };
+      },
+      audio: [
+        {
+          audioContent: base.split('base64,')[1],
+        },
+      ],
+    };
 
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(data),
-        });
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(data),
+      });
 
-        if (response.ok) {
-          const text = await response.json();
-          setInputMsg(text?.output?.[0]?.source);
-        } else {
-          console.error('Error:', response.status);
-        }
-      } catch (err) {
-        toast.error(`${t('message.recorder_error')}`);
+      if (response.ok) {
+        const text = await response.json();
+        setInputMsg(text?.output?.[0]?.source);
+        // setInputMsg('मेरा पैसा कहाँ है');
+      } else {
+        console.error('Error:', response.status);
       }
-
-      return;
+    } catch (err) {
+      toast.error(`${t('message.recorder_error')}`);
     }
+
     toast.success(`${t('message.recorder_wait')}`);
     setAudio(null);
 
-    const apiObj = new ComputeAPI(
-      modelId, //modelId
+    // const apiObj = new ComputeAPI(
+    //   modelId, //modelId
 
-      type === 'url' ? url : base, //input URL
-      'asr', //task
-      type === 'voice' ? true : false, //boolean record audio
-      source, //source
-      filter.asr.inferenceEndPoint, //inference endpoint
-      '' //gender
-    );
+    //   type === 'url' ? url : base, //input URL
+    //   'asr', //task
+    //   type === 'voice' ? true : false, //boolean record audio
+    //   source, //source
+    //   filter.asr.inferenceEndPoint, //inference endpoint
+    //   '' //gender
+    // );
     // const apiObj = new ComputeAPI(
     //   filter.asr.value, //modelId
     //   type === 'url' ? url : base, //input URL
@@ -179,102 +177,99 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
     //   '' //gender
     // );
 
-    console.log('ghji:', { body: apiObj.getBody() });
-    fetch(apiObj.apiEndPoint(), {
-      method: 'post',
-      body: JSON.stringify(apiObj.getBody()),
-      headers: apiObj.getHeaders().headers,
-    })
-      .then(async (resp) => {
-        let rsp_data = await resp.json();
-        if (resp.ok && rsp_data !== null) {
-          setOutput((prev) => ({ ...prev, asr: rsp_data.data.source }));
-          // setInputMsg(rsp_data.data.source);
-          setInputMsg("मेरा पैसा कहाँ है");
-          setSuggestEditValues((prev) => ({
-            ...prev,
-            asr: rsp_data.data.source,
-          }));
+    // console.log('ghji:', { body: apiObj.getBody() });
+    // fetch(apiObj.apiEndPoint(), {
+    //   method: 'post',
+    //   body: JSON.stringify(apiObj.getBody()),
+    //   headers: apiObj.getHeaders().headers,
+    // })
+    //   .then(async (resp) => {
+    //     let rsp_data = await resp.json();
+    //     if (resp.ok && rsp_data !== null) {
+    //       setOutput((prev) => ({ ...prev, asr: rsp_data.data.source }));
+    //       setInputMsg(rsp_data.data.source);
+    //       setSuggestEditValues((prev) => ({
+    //         ...prev,
+    //         asr: rsp_data.data.source,
+    //       }));
 
-          // const obj = new ComputeAPI(
-          //   filter.translation.value,
-          //   rsp_data.data.source,
-          //   'translation',
-          //   '',
-          //   '',
-          //   filter.translation.inferenceEndPoint,
-          //   ''
-          // );
-          // fetch(obj.apiEndPoint(), {
-          //   method: 'post',
-          //   body: JSON.stringify(obj.getBody()),
-          //   headers: obj.getHeaders().headers,
-          // })
-          //   .then(async (translationResp) => {
-          //     let rsp_data = await translationResp.json();
-          //     if (translationResp.ok) {
-          //       setOutput((prev) => ({
-          //         ...prev,
-          //         translation: rsp_data.output[0].target,
-          //       }));
-          //       setSuggestEditValues((prev) => ({
-          //         ...prev,
-          //         translation: rsp_data.output[0].target,
-          //       }));
-          //       const obj = new ComputeAPI(
-          //         filter.tts.value,
-          //         rsp_data.output[0].target,
-          //         'tts',
-          //         '',
-          //         '',
-          //         filter.tts.inferenceEndPoint,
-          //         gender
-          //       );
-          //       fetch(obj.apiEndPoint(), {
-          //         method: 'post',
-          //         headers: obj.getHeaders().headers,
-          //         body: JSON.stringify(obj.getBody()),
-          //       })
-          //         .then(async (ttsResp) => {
-          //           let rsp_data = await ttsResp.json();
-          //           if (ttsResp.ok) {
-          //             if (rsp_data.audio[0].audioContent) {
-          //               const blob = b64toBlob(
-          //                 rsp_data.audio[0].audioContent,
-          //                 'audio/wav'
-          //               );
-          //               setOutputBase64(rsp_data.audio[0].audioContent);
-          //               const urlBlob = window.URL.createObjectURL(blob);
-          //               setAudio(urlBlob);
-          //             } else {
-          //               setOutputBase64(rsp_data.audio[0].audioUri);
-          //               setAudio(rsp_data.audio[0].audioUri);
-          //             }
-          //           } else {
-          //             toast.error(rsp_data.message);
-          //           }
-          //         })
-          //         .catch(async (error) => {
-          //           toast.error(
-          //             'Unable to process your request at the moment. Please try after sometime.'
-          //           );
-          //         });
-          //   } else {
-          //     toast.error(rsp_data.message);
-          //   }
-          // })
-          // .catch(async (error) => {
-          //   toast.error(
-          //     'Unable to process your request at the moment. Please try after sometime.'
-          //   );
-          // });
-        } else {
-          toast.error(rsp_data.message);
-        }
-      })
-      .catch(async (error) => {
-        toast.error(`${t('message.recorder_error')}`);
-      });
+    // const obj = new ComputeAPI(
+    //   filter.translation.value,
+    //   rsp_data.data.source,
+    //   'translation',
+    //   '',
+    //   '',
+    //   filter.translation.inferenceEndPoint,
+    //   ''
+    // );
+    // fetch(obj.apiEndPoint(), {
+    //   method: 'post',
+    //   body: JSON.stringify(obj.getBody()),
+    //   headers: obj.getHeaders().headers,
+    // })
+    //   .then(async (translationResp) => {
+    //     let rsp_data = await translationResp.json();
+    //     if (translationResp.ok) {
+    //       setOutput((prev) => ({
+    //         ...prev,
+    //         translation: rsp_data.output[0].target,
+    //       }));
+    //       setSuggestEditValues((prev) => ({
+    //         ...prev,
+    //         translation: rsp_data.output[0].target,
+    //       }));
+    // const obj = new ComputeAPI(
+    //   process.env.NEXT_PUBLIC_TTS_MODEL_ID,
+    //   "मेरा पैसा कहाँ है",
+    //   'tts',
+    //   '',
+    //   '',
+    //   filter.tts.inferenceEndPoint,
+    //   'female',
+    // );
+    // fetch(obj.apiEndPoint(), {
+    //   method: 'post',
+    //   headers: obj.getHeaders().headers,
+    //   body: JSON.stringify(obj.getBody()),
+    // })
+    //   .then(async (ttsResp) => {
+    //     let rsp_data = await ttsResp.json();
+    //     console.log("hello", rsp_data);
+    //     if (ttsResp.ok) {
+    //       if (rsp_data.audio[0].audioContent) {
+    //         const blob = b64toBlob(rsp_data.audio[0].audioContent, 'audio/wav');
+    //         setOutputBase64(rsp_data.audio[0].audioContent);
+    //         const urlBlob = window.URL.createObjectURL(blob);
+    //         setAudio(urlBlob);
+    //       } else {
+    //         setOutputBase64(rsp_data.audio[0].audioUri);
+    //         setAudio(rsp_data.audio[0].audioUri);
+    //       }
+    //     } else {
+    //       toast.error(rsp_data.message);
+    //     }
+    //   })
+    //   .catch(async (error) => {
+    //     toast.error(
+    //       'Unable to process your request at the moment. Please try after sometime.'
+    //     );
+    //   });
+    //   } else {
+    //     toast.error(rsp_data.message);
+    //   }
+    // })
+    // .catch(async (error) => {
+    //   toast.error(
+    //     'Unable to process your request at the moment. Please try after sometime.'
+    //   );
+    // });
+    //       } else {
+    //         toast.error(rsp_data.message);
+    //       }
+    //     })
+    //     .catch(async (error) => {
+    //       toast.error(`${t('message.recorder_error')}`);
+    //     });
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -323,9 +318,9 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
           />
         </div>
         {/* <div className={styles.centerAudio} style={{ height: '60px' }}>
-          {data ? (
+          {audio ? (
             <audio
-              src={data}
+              src={audio}
               style={{ minWidth: '100%' }}
               controls
               id="sample"></audio>
@@ -334,11 +329,11 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
           )}
         </div> */}
       </Grid>
-      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+      {/* <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
         <Grid container spacing={1}>
-          {/* <Grid item xs={8} sm={12} md={10} lg={10} xl={10}>
+          <Grid item xs={8} sm={12} md={10} lg={10} xl={10}>
             <Typography variant={'caption'}>Max duration: 1 min</Typography>
-          </Grid> */}
+          </Grid>
           <Grid
             item
             xs={4}
@@ -347,7 +342,7 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
             lg={2}
             xl={2}
             className={styles.flexEndStyle}>
-            {/* <Button
+            <Button
               style={{}}
               color="primary"
               variant="contained"
@@ -355,10 +350,10 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
               disabled={data ? false : true}
               onClick={() => handleCompute()}>
               Convert
-            </Button> */}
+            </Button>
           </Grid>
         </Grid>
-      </Grid>
+      </Grid> */}
     </div>
   );
 };

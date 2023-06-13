@@ -1,5 +1,5 @@
 import styles from './index.module.css';
-import KrushakOdisha from "../../assets/images/krushak_odisha.png";
+import Logo from "../../assets/images/MOA_logo.png";
 import Image from "next/image";
 
 function LaunchPage() {
@@ -7,12 +7,12 @@ function LaunchPage() {
     <div className={`${styles.container}`}>
       <Image
               className={styles.loginImage}
-              src={KrushakOdisha}
-              alt="KrushakOdisha"
-              width={220}
-              height={233}
+              src={Logo}
+              alt="Logo"
+              width={235}
+              height={235}
             />
-            <span>Ama KrushAI</span>
+            <span>AgrI-Mitra</span>
     </div>
   )
 }
