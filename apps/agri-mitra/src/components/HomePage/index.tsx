@@ -22,7 +22,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { useFlags } from 'flagsmith/react';
 import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
 import Popup from '../Popup';
-import { TextToSpeech } from '../recorder/textToSpeech';
 
 const HomePage: NextPage = () => {
   const context = useContext(AppContext);
@@ -46,6 +45,10 @@ const HomePage: NextPage = () => {
   }, [t, context?.locale, flags]);
 
   useEffect(() => {
+    if(!(localStorage.getItem('locale') === 'en')){
+      localStorage.setItem('locale', 'en'); 
+    }
+
     context?.fetchIsDown(); // check if server is down
 
     if (!sessionStorage.getItem('conversationId')) {
