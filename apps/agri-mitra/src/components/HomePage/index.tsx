@@ -36,13 +36,13 @@ const HomePage: NextPage = () => {
     'or_example_ques_three',
   ]);
   const [messages, setMessages] = useState<Array<any>>([
-    getInitialMsgs(t, flags, context?.locale),
+    getInitialMsgs(t, flags),
   ]);
   const [inputMsg, setInputMsg] = useState('');
 
   useEffect(() => {
-    setMessages([getInitialMsgs(t, flags, context?.locale)]);
-  }, [t, context?.locale, flags]);
+    setMessages([getInitialMsgs(t, flags)]);
+  }, [t, flags]);
 
   useEffect(() => {
     if(!(localStorage.getItem('locale') === 'en')){
