@@ -1,0 +1,17 @@
+.menu{
+  background-color: var(--darkgrey);
+  /* min-height: fit-content; */
+  height: 7vh;
+  width: 100vw;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 3vh;
+  position: fixed;
+  bottom: 0;
+}
+
+.menu div{
+  height: 5vh;
+  width: 5vh;
+}

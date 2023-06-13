@@ -1,0 +1,98 @@
+.main {
+  margin: 1vh 0 1vh 1vh;
+  overflow-x: hidden;
+  overflow-y: scroll !important;
+  width: 98%;
+  position: fixed;
+  bottom: 7vh;
+  top: 70px;
+}
+.main button {
+  box-shadow: none !important;
+}
+.main::-webkit-scrollbar {
+  width: 4px;
+  height: 6px;
+}
+.main::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.1);
+}
+.main::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.main::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+.main::-webkit-scrollbar-thumb:active {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.title {
+  margin-top: 4vh;
+  margin-left: 2vh;
+  font-family: 'Mulish-Bold';
+  font-size: 4.2vh;
+  font-weight: 700;
+  color: var(--secondarygreen);
+  margin-bottom: 1vh;
+}
+
+.bottomSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.manualButtons {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.submitButton {
+  font-size: 1.65vh !important;
+  color: white;
+  margin: 4vh auto 0 auto;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Mulish-regular';
+  width: fit-content;
+  padding: 1vh;
+  border: none;
+  background-color: var(--secondarygreen) !important;
+}
+
+.dialerBox {
+  background-color: white;
+  margin: 2vh;
+  border-radius: 10px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.16);
+  padding-bottom: 1vh;
+}
+
+.callIconBox {
+  height: 5vh;
+  width: 5vh;
+  margin-right: 1vh;
+}
+
+.footer {
+  font-weight: bold;
+  margin-left: 2vh;
+  margin-top: 2vh;
+  font-size: 1.89vh;
+}
+
+.footerTitle {
+  display: flex;
+  align-items: center;
+  margin-top: 2vh;
+  margin-left: 2vh;
+  font-family: 'Mulish-Bold';
+  font-size: 4.2vh;
+  font-weight: 700;
+  color: var(--secondarygreen);
+}

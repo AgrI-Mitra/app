@@ -1,0 +1,109 @@
+.main {
+  margin: 1vh;
+}
+
+.title {
+  margin-top: 4vh;
+  margin-left: 2vh;
+  font-family: 'Mulish-Bold';
+  font-size: 4.5vh;
+  font-weight: 700;
+  color: var(--secondarygreen);
+}
+
+.rating {
+  margin: 1vh auto;
+  padding: 3vh;
+  text-align: center;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.16);
+  border-radius: 8px;
+  background-color: white;
+}
+.rating h1{
+  font-family: Mulish-bold;
+  font-weight: bolder;
+  font-size: 2.89vh;
+  margin-bottom: 1vh;
+}
+
+.rating p{
+  margin-top: 1vh;
+  font-family: 'Mulish-normal';
+  font-size: 2vh;
+}
+
+.rating button {
+  font-weight: 700 ;
+  font-size: 1.65vh !important;
+  color: white ;
+  margin: 2vh auto 0 auto;
+  font-family: 'Mulish-regular';
+  padding: 10px ;
+  border: none ;
+  border-radius: 40px !important;
+  background-color: var(--secondarygreen) !important;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.star {
+  width: 6vh;
+  height: 6vh;
+}
+
+.review {
+  display: flex;
+  flex-direction: column;
+  margin: 1vh auto;
+  padding: 2vh;
+  text-align: center;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.16);
+  border-radius: 8px;
+  background-color: white;
+}
+
+.review textarea {
+  padding: 5px;
+  border: 2px solid var(--secondarygreen);
+}
+
+.review h1{
+  font-family: Mulish-bold;
+  font-weight: bolder;
+  font-size: 2.89vh;
+  margin-bottom: 2vh;
+}
+
+.review p{
+  margin-top: 2vh;
+  font-family: 'Mulish-regular';
+}
+
+.review button {
+  font-weight: 700 ;
+  font-size: 1.65vh !important;
+  color: white ;
+  margin: 1vh auto 0 auto;
+  font-family: 'Mulish-regular';
+  padding: 10px ;
+  border: none ;
+  border-radius: 40px !important;
+  background-color: var(--secondarygreen) !important;
+}
+
+.review textarea {
+  font-size: 0.875rem;
+  color: var(--font);
+}
+.review textarea::placeholder {
+  line-height: 90px;
+}
+
+.review textarea:focus{
+  outline: none !important;
+  border: 2px solid var(--secondarygreen);
+}
