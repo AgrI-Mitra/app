@@ -1,7 +1,7 @@
 import { useState, useContext, useCallback } from 'react';
 import styles from './index.module.css';
 import PhoneImg from '../../assets/images/phone.png';
-import MOA from '../../assets/images/logo.jpg';
+import MOA from '../../assets/images/MOA_logo.png';
 import Emblem from '../../assets/images/emblem.png';
 import plusIcon from '../../assets/icons/plus.svg';
 import shareIcon from '../../assets/icons/share.svg';
