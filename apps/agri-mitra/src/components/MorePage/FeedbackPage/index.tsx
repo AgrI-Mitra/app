@@ -10,9 +10,6 @@ import React, {
   useState,
 } from 'react';
 import Menu from '../../menu';
-//@ts-ignore
-import { analytics } from '../../../utils/firebase';
-import { logEvent } from 'firebase/analytics';
 import ComingSoonPage from '../../coming-soon-page';
 import { useFlags } from 'flagsmith/react';
 import axios from 'axios';
@@ -26,10 +23,6 @@ const FeedbackPage: React.FC = () => {
   const [rating, setRating] = useState(1);
   const [review, setReview] = useState('');
   const flags = useFlags(['show_feedback_page']);
-  useEffect(() => {
-    //@ts-ignore
-    logEvent(analytics, 'Feedback_page');
-  }, []);
 
   const [submitError, ratingSubmitted, reviewSubmitted, reviewSubmitError] =
     useMemo(
@@ -67,10 +60,6 @@ const FeedbackPage: React.FC = () => {
           })
           .catch((error) => {
             toast.error(submitError);
-            //@ts-ignore
-            logEvent(analytics, 'console_error', {
-              error_message: error.message,
-            });
           });
       } else if (typeof r === 'string') {
         axios
@@ -91,10 +80,6 @@ const FeedbackPage: React.FC = () => {
           })
           .catch((error) => {
             toast.error(reviewSubmitError);
-            //@ts-ignore
-            logEvent(analytics, 'console_error', {
-              error_message: error.message,
-            });
           });
       }
     },

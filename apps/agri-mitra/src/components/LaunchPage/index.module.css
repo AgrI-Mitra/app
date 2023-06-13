@@ -9,6 +9,7 @@
 }
 
 .container span {
+  margin-top: 2vh;
   font-family: Mulish-bold;
   font-size: 36px;
   font-weight: 700; 

@@ -5,10 +5,6 @@ import { Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import ChatItem from '../chat-item';
 import { NextPage } from 'next';
 import Image from 'next/image';
-
-//@ts-ignore
-import { analytics } from '../../utils/firebase';
-import { logEvent } from 'firebase/analytics';
 import Menu from '../menu';
 import { useLocalization } from '../../hooks';
 import ComingSoonPage from '../coming-soon-page';
@@ -21,8 +17,6 @@ const HistoryPage: NextPage = () => {
   const t = useLocalization();
 
   useEffect(() => {
-    //@ts-ignore
-    logEvent(analytics, 'Chat_History_page');
 
     axios
       .get(`${process.env.NEXT_PUBLIC_BASE_URL}/user/conversations`, {
@@ -43,10 +37,7 @@ const HistoryPage: NextPage = () => {
         console.log('hie', sortedConversations);
       })
       .catch((error) => {
-        //@ts-ignore
-        logEvent(analytics, 'console_error', {
-          error_message: error.message,
-        });
+        console.error(error);
       });
   }, []);
 

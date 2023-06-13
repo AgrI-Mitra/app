@@ -11,8 +11,6 @@ import { AppContext } from '.';
 import _ from 'underscore';
 import { v4 as uuidv4 } from 'uuid';
 import { send } from '../socket';
-import { analytics } from '../utils/firebase';
-import { logEvent } from 'firebase/analytics';
 import { UserType } from '../types';
 import { IntlProvider } from 'react-intl';
 import { useLocalization } from '../hooks';
@@ -65,6 +63,7 @@ const ContextProvider: FC<{
   const [isConnected, setIsConnected] = useState(newSocket?.connected || false);
   const [showPopUp, setShowPopUp] = useState(false);
   const [cookie, setCookie, removeCookie] = useCookies();
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   console.log(messages);
 
   useEffect(() => {
@@ -214,10 +213,6 @@ const ContextProvider: FC<{
 
     function onException(exception: any) {
       toast.error(exception?.message);
-      //@ts-ignore
-      logEvent(analytics, 'console_error', {
-        error_message: exception?.message,
-      });
     }
 
     if (newSocket) {
@@ -278,8 +273,6 @@ const ContextProvider: FC<{
         );
         return;
       }
-      //@ts-ignore
-      logEvent(analytics, 'Query_sent');
       //  console.log('mssgs:',messages)
       send({ text, socketSession, socket: newSocket, conversationId });
       if (isVisibile)
@@ -334,10 +327,7 @@ const ContextProvider: FC<{
         console.log('Server status is not OK');
       }
     } catch (error) {
-      //@ts-ignore
-      logEvent(analytics, 'console_error', {
-        error_message: error.message,
-      });
+      console.error(error);
     }
   }, [setIsDown, flags]);
 
@@ -366,11 +356,6 @@ const ContextProvider: FC<{
             setIsMsgReceiving(false);
             setLoading(false);
             fetchIsDown();
-            //@ts-ignore
-            logEvent(analytics, 'Msg_delay', {
-              user_id: localStorage.getItem('userID'),
-              phone_number: localStorage.getItem('phoneNumber'),
-            });
           }
         }, timer2);
       }
@@ -409,6 +394,8 @@ const ContextProvider: FC<{
       setShowDialerPopup,
       showPopUp,
       setShowPopUp,
+      isAudioPlaying,
+      setIsAudioPlaying,
     }),
     [
       locale,
@@ -435,6 +422,8 @@ const ContextProvider: FC<{
       setShowDialerPopup,
       showPopUp,
       setShowPopUp,
+      isAudioPlaying,
+      setIsAudioPlaying,
     ]
   );
 

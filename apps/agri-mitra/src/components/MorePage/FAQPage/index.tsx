@@ -12,8 +12,6 @@ import searchIcon from '../../../assets/icons/search.svg';
 import callIcon from '../../../assets/icons/call-icon.svg';
 import Image from 'next/image';
 import Menu from '../../menu';
-import { analytics } from '../../../utils/firebase';
-import { logEvent } from 'firebase/analytics';
 import { useFlags } from 'flagsmith/react';
 import ComingSoonPage from '../../coming-soon-page';
 import axios from 'axios';
@@ -33,9 +31,6 @@ const FAQPage: React.FC = () => {
   console.log(flags);
 
   useEffect(() => {
-    //@ts-ignore
-    logEvent(analytics, 'FAQ_page');
-
     const fetchData = async () => {
       let page = 1;
       let allData: any[] = [];
@@ -60,10 +55,7 @@ const FAQPage: React.FC = () => {
           page++;
         } catch (error) {
           console.log(error);
-          //@ts-ignore
-          logEvent(analytics, 'console_error', {
-            error_message: error.message,
-          });
+          console.error(error);
           break;
         }
       }
@@ -100,10 +92,7 @@ const FAQPage: React.FC = () => {
         })
         .catch((error) => {
           console.error(error);
-          //@ts-ignore
-          logEvent(analytics, 'console_error', {
-            error_message: error.message,
-          });
+          console.error(error);
         });
     },
     [flags]

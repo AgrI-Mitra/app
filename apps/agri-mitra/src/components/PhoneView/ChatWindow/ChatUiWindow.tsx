@@ -9,8 +9,6 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { analytics } from '../../../utils/firebase';
-import { logEvent } from 'firebase/analytics';
 import { AppContext } from '../../../context';
 import { useLocalization } from '../../../hooks';
 import { getMsgType } from '../../../utils/getMsgType';
@@ -51,10 +49,7 @@ const ChatUiWindow: React.FC = () => {
           }
         }
       } catch (error: any) {
-        //@ts-ignore
-        logEvent(analytics, 'console_error', {
-          error_message: error.message,
-        });
+        console.log(error);
       }
     };
     !context?.loading && fetchData();
@@ -189,9 +184,9 @@ const ChatUiWindow: React.FC = () => {
 
   const placeholder = useMemo(() => t('message.ask_ur_question'), [t]);
 
-  if (context?.isDown) {
-    return <DownTimePage />;
-  } else
+  // if (context?.isDown) {
+  //   return <DownTimePage />;
+  // } else
     return (
       <div style={{ height: '100%', width: '100%' }}>
         {context?.showPopUp && <Popup msg={msg} />}

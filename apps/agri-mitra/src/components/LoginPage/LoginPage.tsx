@@ -8,8 +8,6 @@ import {
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useLocalization } from '../../hooks/useLocalization';
-import { logEvent } from 'firebase/analytics';
-import { analytics } from '../../utils/firebase';
 import toast from 'react-hot-toast';
 const LoginPage: React.FC = () => {
   const router = useRouter();
@@ -46,11 +44,6 @@ const LoginPage: React.FC = () => {
       })
     }
   };
-
-  useEffect(() => {
-    //@ts-ignore
-    logEvent(analytics, 'Login_page');
-  }, []);
 
   return (
     <div className={`${styles.main}`}>
