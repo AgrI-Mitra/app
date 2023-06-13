@@ -42,8 +42,17 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
   };
 
   const handleStartRecording = () => {
-    setRecordAudio(RecordState.START);
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(() => {
+        setRecordAudio(RecordState.START);
+      })
+      .catch((err) => {
+        toast.error("Please allow microphone permission");
+        console.error(err);
+        return;
+      });
   };
+  
 
   const blobToBase64 = (blob) => {
     return new Promise((resolve, reject) => {
