@@ -1,32 +1,33 @@
-import styles from "./index.module.css";
+import styles from './index.module.css';
 import React, {
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
-} from "react";
-import { NextPage } from "next";
-import Menu from "../menu";
-import { getInitialMsgs } from "../../utils/textUtility";
-import { AppContext } from "../../context";
+} from 'react';
+import { NextPage } from 'next';
+import Menu from '../menu';
+import { getInitialMsgs } from '../../utils/textUtility';
+import { AppContext } from '../../context';
 
-import RightIcon from "../../assets/icons/right";
-import sunIcon from "../../assets/icons/sun.svg";
-import reloadIcon from "../../assets/icons/reload.svg";
-import { useLocalization } from "../../hooks";
-import Image from "next/image";
-import { Button } from "@chakra-ui/react";
-import toast from "react-hot-toast";
-import { v4 as uuidv4 } from "uuid";
-import { useFlags } from "flagsmith/react";
+import RightIcon from '../../assets/icons/right';
+import sunIcon from '../../assets/icons/sun.svg';
+import reloadIcon from '../../assets/icons/reload.svg';
+import { useLocalization } from '../../hooks';
+import Image from 'next/image';
+import { Button } from '@chakra-ui/react';
+import toast from 'react-hot-toast';
+import { v4 as uuidv4 } from 'uuid';
+import { useFlags } from 'flagsmith/react';
 import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
-import Popup from "../Popup";
+import Popup from '../Popup';
+import { TextToSpeech } from '../recorder/textToSpeech';
 
 const HomePage: NextPage = () => {
   const context = useContext(AppContext);
   const t = useLocalization();
-  const placeholder = useMemo(() => t("message.ask_ur_question"), [t]);
+  const placeholder = useMemo(() => t('message.ask_ur_question'), [t]);
   const flags = useFlags([
     'en_example_ques_one',
     'en_example_ques_two',
@@ -35,20 +36,21 @@ const HomePage: NextPage = () => {
     'or_example_ques_two',
     'or_example_ques_three',
   ]);
-  const [messages, setMessages] = useState<Array<any>>([getInitialMsgs(t, flags, context?.locale)]);
-  const [inputMsg, setInputMsg] = useState("");
+  const [messages, setMessages] = useState<Array<any>>([
+    getInitialMsgs(t, flags, context?.locale),
+  ]);
+  const [inputMsg, setInputMsg] = useState('');
 
   useEffect(() => {
     setMessages([getInitialMsgs(t, flags, context?.locale)]);
   }, [t, context?.locale, flags]);
 
   useEffect(() => {
-
     context?.fetchIsDown(); // check if server is down
 
-    if (!sessionStorage.getItem("conversationId")) {
+    if (!sessionStorage.getItem('conversationId')) {
       const newConversationId = uuidv4();
-      sessionStorage.setItem("conversationId", newConversationId);
+      sessionStorage.setItem('conversationId', newConversationId);
       context?.setConversationId(newConversationId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,7 +59,7 @@ const HomePage: NextPage = () => {
   const sendMessage = useCallback(
     async (msg: string) => {
       if (msg.length === 0) {
-        toast.error(t("error.empty_msg"));
+        toast.error(t('error.empty_msg'));
         return;
       }
       // try {
@@ -97,15 +99,15 @@ const HomePage: NextPage = () => {
       //       return;
       //     }
       //   } else {
-          if (context?.socketSession && context?.newSocket?.connected) {
-            console.log("clearing mssgs");
-            context?.setMessages([]);
-            context?.setShowPopUp(true);
-          } else {
-            toast.error(t("error.disconnected"));
-            return;
-          }
-        // }
+      if (context?.socketSession && context?.newSocket?.connected) {
+        console.log('clearing mssgs');
+        context?.setMessages([]);
+        context?.setShowPopUp(true);
+      } else {
+        toast.error(t('error.disconnected'));
+        return;
+      }
+      // }
       // } catch (error) {
       //   console.error(error);
       // }
@@ -115,7 +117,7 @@ const HomePage: NextPage = () => {
 
   return (
     <>
-    {context?.showPopUp && <Popup msg={inputMsg} />}
+      {context?.showPopUp && <Popup msg={inputMsg} />}
       <div className={styles.main}>
         {/* {!(context?.socketSession && context?.newSocket?.connected) && (
           <div className={styles.disconnected}>
@@ -148,9 +150,9 @@ const HomePage: NextPage = () => {
         })}
         <form onSubmit={(event) => event?.preventDefault()}>
           <div className={styles.inputBox}>
-          <div>
-          <RenderVoiceRecorder setInputMsg={setInputMsg}/>
-          </div>
+            <div>
+              <RenderVoiceRecorder setInputMsg={setInputMsg} />
+            </div>
             <input
               type="text"
               value={inputMsg}
@@ -161,7 +163,7 @@ const HomePage: NextPage = () => {
               type="submit"
               onClick={() => sendMessage(inputMsg)}
               className={styles.sendButton}>
-              {t("label.send")}
+              {t('label.send')}
             </button>
           </div>
         </form>

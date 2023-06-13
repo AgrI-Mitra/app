@@ -34,6 +34,9 @@ const App = ({ Component, pageProps }: AppProps) => {
   const [flagsmithState, setflagsmithState] = useState(null);
 
   useEffect(() => {
+    if(!(localStorage.getItem('locale') === 'en')){
+      localStorage.setItem('locale', 'en'); 
+    }
     setTimeout(() => {
       setLaunch(false);
     }, 2500);

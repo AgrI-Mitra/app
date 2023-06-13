@@ -23,6 +23,7 @@ import { toast } from 'react-hot-toast';
 
 import styles from './index.module.css';
 import RightIcon from '../../assets/icons/right.jsx';
+import speakerIcon from '../../assets/icons/speakerIcon.svg';
 import CopyText from '../../assets/icons/copy-text.svg';
 import MsgThumbsUp from '../../assets/icons/msg-thumbs-up.jsx';
 import MsgThumbsDown from '../../assets/icons/msg-thumbs-down.jsx';
@@ -35,6 +36,8 @@ import { useFlags } from 'flagsmith/react';
 import Image from 'next/image';
 import { Button } from '@chakra-ui/react';
 import flagsmith from 'flagsmith/isomorphic';
+import { textToSpeech } from '../../utils/textToSpeech';
+import ComputeAPI from '../recorder/Model/ModelSearch/HostedInference';
 
 const getToastMessage = (t: any, reaction: number): string => {
   if (reaction === 1) return t('toast.reaction_like');
@@ -46,11 +49,9 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
   onSend,
 }) => {
   const flags = useFlags(['show_msg_id']);
- 
   const t = useLocalization();
   const context = useContext(AppContext);
   const [reaction, setReaction] = useState(message?.content?.data?.reaction);
-
 
   useEffect(() => {
     setReaction(message?.content?.data?.reaction);
@@ -81,9 +82,8 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
     [t]
   );
 
-
   async function copyTextToClipboard(text: string) {
-    console.log("here")
+    console.log('here');
     if ('clipboard' in navigator) {
       return await navigator.clipboard.writeText(text);
     } else {
@@ -152,6 +152,36 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
     [context, t]
   );
 
+  const ttsHandler = useCallback(async (text: string) => {
+    const obj = new ComputeAPI(
+      process.env.NEXT_PUBLIC_TTS_MODEL_ID,
+      text,
+      'tts',
+      '',
+      '',
+      '',
+      'female'
+    );
+    try {
+      const res = await textToSpeech(obj);
+      const audio = new Audio(res);
+
+      audio.addEventListener('ended', () => {
+        context?.setIsAudioPlaying(false);
+      });
+
+      if(!context?.isAudioPlaying){
+        audio.play();
+        context?.setIsAudioPlaying(true);
+      }else{
+        toast.error("Please let the current audio finish playing")
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [context?.isAudioPlaying, context?.setIsAudioPlaying]);
+
   const { content, type } = message;
 
   switch (type) {
@@ -164,7 +194,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
-            maxWidth: '90vw'
+            maxWidth: '90vw',
           }}>
           <div
             className={
@@ -182,15 +212,16 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
                   content?.data?.position === 'right' ? 'white' : 'var(--font)',
               }}>
               {content.text}
-
             </span>
             <div
               style={{
                 display: 'flex',
-                justifyContent: content?.data?.position === 'left' ? 'space-between' : 'flex-end',
+                justifyContent:
+                  content?.data?.position === 'left'
+                    ? 'space-between'
+                    : 'flex-end',
               }}>
-      
-              {content?.data?.position === "left" && flags?.show_msg_id?.enabled &&(
+              {/* {content?.data?.position === "left" && flags?.show_msg_id?.enabled &&(
                 <span>
                   <Button colorScheme='teal' variant='outline' size='xs' onClick={() => copyTextToClipboard(content?.data?.messageId).then(() => {
                     toast.success("coppied");
@@ -202,10 +233,11 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
                   </Button>
 
                 </span>)
-              }
-
+              } */}
               <span
                 style={{
+                  display: 'flex',
+                  alignItems: 'center',
                   color:
                     content?.data?.position === 'right'
                       ? 'white'
@@ -214,10 +246,15 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
                 }}>
                 {getFormatedTime(
                   content?.data?.sentTimestamp ||
-                  content?.data?.repliedTimestamp
+                    content?.data?.repliedTimestamp
                 )}
               </span>
 
+              {content?.data?.position === 'left' && (
+                <div onClick={() => ttsHandler(content?.text)}>
+                  <Image src={speakerIcon} alt="" width={25} height={25} />
+                </div>
+              )}
             </div>
           </Bubble>
           {content?.data?.position === 'left' && (
@@ -281,7 +318,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
                 <span style={{ color: 'var(--font)', fontSize: '10px' }}>
                   {getFormatedTime(
                     content?.data?.sentTimestamp ||
-                    content?.data?.repliedTimestamp
+                      content?.data?.repliedTimestamp
                   )}
                 </span>
               </div>
@@ -315,7 +352,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
                 <span style={{ color: 'var(--font)', fontSize: '10px' }}>
                   {getFormatedTime(
                     content?.data?.sentTimestamp ||
-                    content?.data?.repliedTimestamp
+                      content?.data?.repliedTimestamp
                   )}
                 </span>
               </div>
@@ -353,7 +390,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
                 <span style={{ color: 'var(--font)', fontSize: '10px' }}>
                   {getFormatedTime(
                     content?.data?.sentTimestamp ||
-                    content?.data?.repliedTimestamp
+                      content?.data?.repliedTimestamp
                   )}
                 </span>
               </div>
@@ -396,5 +433,3 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
 };
 
 export default ChatMessageItem;
-
- 

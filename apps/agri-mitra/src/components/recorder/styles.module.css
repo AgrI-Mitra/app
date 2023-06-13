@@ -4,3 +4,7 @@
   height: 45px;
   width: 45px;
 }
+.centerAudio {
+  display: flex;
+  justify-content: center;
+}

@@ -63,6 +63,7 @@ const ContextProvider: FC<{
   const [isConnected, setIsConnected] = useState(newSocket?.connected || false);
   const [showPopUp, setShowPopUp] = useState(false);
   const [cookie, setCookie, removeCookie] = useCookies();
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   console.log(messages);
 
   useEffect(() => {
@@ -393,6 +394,8 @@ const ContextProvider: FC<{
       setShowDialerPopup,
       showPopUp,
       setShowPopUp,
+      isAudioPlaying,
+      setIsAudioPlaying,
     }),
     [
       locale,
@@ -419,6 +422,8 @@ const ContextProvider: FC<{
       setShowDialerPopup,
       showPopUp,
       setShowPopUp,
+      isAudioPlaying,
+      setIsAudioPlaying,
     ]
   );
 
