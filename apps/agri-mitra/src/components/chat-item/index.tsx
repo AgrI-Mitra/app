@@ -6,8 +6,6 @@ import deleteIcon from '../../assets/icons/delete.svg';
 import Image from 'next/image';
 import router from 'next/router';
 import axios from 'axios';
-import { analytics } from '../../utils/firebase';
-import { logEvent } from 'firebase/analytics';
 import { v4 as uuidv4 } from 'uuid';
 import { AppContext } from '../../context';
 import { useLocalization } from '../../hooks';
@@ -51,10 +49,7 @@ const ChatItem: React.FC<ChatItemPropsType> = ({
           setIsConversationDeleted(true);
         })
         .catch((error) => {
-          //@ts-ignore
-          logEvent(analytics, 'console_error', {
-            error_message: error.message,
-          });
+          console.error(error);
         });
     }
   }, [context, conversationId, deleteConversationById, t]);
