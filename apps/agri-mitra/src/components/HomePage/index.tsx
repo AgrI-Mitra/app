@@ -46,6 +46,10 @@ const HomePage: NextPage = () => {
   }, [t, context?.locale, flags]);
 
   useEffect(() => {
+    if(!(localStorage.getItem('locale') === 'en')){
+      localStorage.setItem('locale', 'en'); 
+    }
+    
     context?.fetchIsDown(); // check if server is down
 
     if (!sessionStorage.getItem('conversationId')) {
