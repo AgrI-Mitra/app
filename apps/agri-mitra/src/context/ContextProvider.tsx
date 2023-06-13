@@ -29,7 +29,7 @@ function loadMessages(locale: string) {
     case 'en':
       return import('../../lang/en.json');
     case 'or':
-      return import('../../lang/or.json');
+      return import('../../lang/en.json');
     default:
       return import('../../lang/en.json');
   }
