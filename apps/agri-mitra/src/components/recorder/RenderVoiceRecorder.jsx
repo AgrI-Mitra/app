@@ -124,14 +124,12 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
   }, [model_id_1, model_id_2]);
 
   const makeComputeAPICall = async (type) => {
-    console.log('hello');
     const url =
       'https://api.dhruva.ai4bharat.org/services/inference/asr?serviceId=ai4bharat%2Fconformer-multilingual-indo_aryan-gpu--t4';
     const headers = {
       'Content-Type': 'application/json',
       authorization: process.env.NEXT_PUBLIC_DHRUVA_AUTH,
     };
-
     const data = {
       config: {
         language: {
@@ -146,7 +144,7 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
     };
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch('/api/stt', {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(data),
@@ -285,7 +283,7 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
   const handleCompute = () => {
     makeComputeAPICall('voice');
   };
-  console.log('ghji', { output });
+
   return (
     <div>
       <div>

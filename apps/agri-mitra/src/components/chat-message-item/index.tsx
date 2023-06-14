@@ -52,6 +52,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
   const t = useLocalization();
   const context = useContext(AppContext);
   const [reaction, setReaction] = useState(message?.content?.data?.reaction);
+  
 
   useEffect(() => {
     setReaction(message?.content?.data?.reaction);
@@ -135,7 +136,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
                     console.log('clearing chat');
                     context?.setMessages([]);
                   }
-                  context?.sendMessage(choice.text);
+                  // context?.sendMessage(choice.text);
                 }
               }}>
               <div className="onHover" style={{ display: 'flex' }}>
@@ -152,35 +153,53 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
     [context, t]
   );
 
-  const ttsHandler = useCallback(async (text: string) => {
-    const obj = new ComputeAPI(
-      process.env.NEXT_PUBLIC_TTS_MODEL_ID,
-      text,
-      'tts',
-      '',
-      '',
-      '',
-      'female'
-    );
-    try {
-      const res = await textToSpeech(obj);
-      const audio = new Audio(res);
+  const ttsHandler = useCallback(
+    async (text: string) => {
+      const obj = new ComputeAPI(
+        process.env.NEXT_PUBLIC_TTS_MODEL_ID,
+        text,
+        'tts',
+        '',
+        '',
+        '',
+        'female'
+      );
+      try {
+        let audio;
+        // if (!context?.audioRef.current) {
+          const res = await textToSpeech(obj);
+          audio = new Audio(res);
+        // }else{
+        //   audio = context?.audioRef.current;
+        // }
 
-      audio.addEventListener('ended', () => {
-        context?.setIsAudioPlaying(false);
-      });
+        audio.addEventListener('ended', () => {
+          context && (context.audioRef.current = null);
+          context?.setIsAudioPlaying(false);
+        });
 
-      if(!context?.isAudioPlaying){
-        audio.play();
-        context?.setIsAudioPlaying(true);
-      }else{
-        toast.error("Please let the current audio finish playing")
+        if (context?.audioRef.current === audio) {
+          if (context?.isAudioPlaying) {
+            audio.pause();
+          } else {
+            audio.play();
+          }
+          context?.setIsAudioPlaying(!context?.isAudioPlaying);
+        } else {
+          if (context?.audioRef.current) {
+            context?.audioRef.current.pause();
+          }
+          context && (context.audioRef.current = audio);
+          audio.play();
+          context?.setIsAudioPlaying(true);
+        }
+      } catch (err) {
+        console.error(err);
       }
-    } catch (err) {
-      console.error(err);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [context?.isAudioPlaying, context?.setIsAudioPlaying]);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [context?.isAudioPlaying, context?.context?.audioRef]
+  );
 
   const { content, type } = message;
 
