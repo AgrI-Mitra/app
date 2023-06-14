@@ -38,7 +38,8 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   border-radius: 0 25px;
   justify-content: space-between;
-  height: fit-content;
+  /* height: fit-content; */
+  height: 65px;
   width: 85vw;
   padding: 1vh;
 }
@@ -85,8 +86,8 @@
 }
 
 .rightIcon{
-  /* height: 30px;
-  width: 30px; */
+  max-height: 30px;
+  max-width: 30px;
   flex: 0.1;
 }
 
