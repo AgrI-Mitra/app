@@ -26,7 +26,7 @@
   margin-top: 2vh;
   text-align: center;
   font-family: 'Mulish-Bold';
-  font-size: 4.265vh;
+  font-size: 4.5vh;
   font-weight: 700;
 }
 
@@ -41,9 +41,12 @@
   height: fit-content;
   width: 85vw;
   padding: 1vh;
+}
+
+.buttonChoice button {
   text-align: left;
-  font-size: 16px;
   font-weight: bold;
+  flex: 0.8;
 }
 
 .inputBox {
@@ -70,7 +73,7 @@
 
 .sendButton {
   font-weight: 700;
-  font-size: 14px !important;
+  font-size: 15px !important;
   color: white;
   font-family: 'Mulish-regular';
   width: 26vw !important;
@@ -79,5 +82,11 @@
   border: none;
   border-radius: 40px !important;
   background-color: var(--secondarygreen) !important;
+}
+
+.rightIcon{
+  /* height: 30px;
+  width: 30px; */
+  flex: 0.1;
 }
 

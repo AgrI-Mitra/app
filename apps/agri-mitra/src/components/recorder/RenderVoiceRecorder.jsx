@@ -42,17 +42,17 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
   };
 
   const handleStartRecording = () => {
-    navigator.mediaDevices.getUserMedia({ audio: true })
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
       .then(() => {
         setRecordAudio(RecordState.START);
       })
       .catch((err) => {
-        toast.error("Please allow microphone permission");
+        toast.error('Please allow microphone permission');
         console.error(err);
         return;
       });
   };
-  
 
   const blobToBase64 = (blob) => {
     return new Promise((resolve, reject) => {
@@ -116,62 +116,72 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
     return blob;
   };
 
-  const [modelId, source] = useMemo(() => {
-    if (localStorage.getItem('locale') === 'en') {
-      return [model_id_1, 'hi'];
-    }
-    return [model_id_2, 'or'];
-  }, [model_id_1, model_id_2]);
+
 
   const makeComputeAPICall = async (type) => {
-    const headers = {
-      'Content-Type': 'application/json',
-      authorization: process.env.NEXT_PUBLIC_DHRUVA_AUTH,
-    };
-    const data = {
-      config: {
-        language: {
-          sourceLanguage: 'hi',
-        },
-      },
-      audio: [
-        {
-          audioContent: base.split('base64,')[1],
-        },
-      ],
-    };
+    // const headers = {
+    //   'Content-Type': 'application/json',
+    //   authorization: process.env.NEXT_PUBLIC_DHRUVA_AUTH,
+    // };
+    // const data = {
+    //   config: {
+    //     language: {
+    //       sourceLanguage: localStorage.getItem('locale'),
+    //     },
+    //   },
+    //   audio: [
+    //     {
+    //       audioContent: base.split('base64,')[1],
+    //     },
+    //   ],
+    // };
 
-    try {
-      const response = await fetch('/api/stt', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(data),
-      });
+    // try {
+      toast.success(`${t('message.recorder_wait')}`);
+    //   const response = await fetch('/api/stt', {
+    //     method: 'POST',
+    //     headers: headers,
+    //     body: JSON.stringify(data),
+    //   });
 
-      if (response.ok) {
-        toast.success(`${t('message.recorder_wait')}`);
-        const text = await response.json();
-        setInputMsg(text?.output?.[0]?.source);
-        // setInputMsg('मेरा पैसा कहाँ है');
-      } else {
-        console.error('Error:', response.status);
-      }
-    } catch (err) {
-      toast.error(`${t('message.recorder_error')}`);
-    }
+    //   if (response.ok) {
+    //     const text = await response.json();
+    //     setInputMsg(text?.output?.[0]?.source);
+    //     // setInputMsg('मेरा पैसा कहाँ है');
+    //   } else {
+    //     console.error('Error:', response.status);
+    //   }
+    // } catch (err) {
+    //   toast.error(`${t('message.recorder_error')}`);
+    // }
 
     setAudio(null);
 
-    // const apiObj = new ComputeAPI(
-    //   modelId, //modelId
-
-    //   type === 'url' ? url : base, //input URL
-    //   'asr', //task
-    //   type === 'voice' ? true : false, //boolean record audio
-    //   source, //source
-    //   filter.asr.inferenceEndPoint, //inference endpoint
-    //   '' //gender
-    // );
+    const modelId = () => {
+      const lang = localStorage.getItem('locale') || 'en';
+      switch(lang){
+        case 'hi':
+          return '64117455b1463435d2fbaec4';
+        case 'bn':
+          return '6411746956e9de23f65b5426';
+        case 'ta':
+          return '641174ad56e9de23f65b542a';
+        case 'te':
+          return '6411748db1463435d2fbaec5';
+        default:
+          return '63ee09c3b95268521c70cd7c';
+      }
+    };
+    console.log("hello", modelId());
+    const apiObj = new ComputeAPI(
+      modelId(), //modelId
+      type === 'url' ? url : base, //input URL
+      'asr', //task
+      type === 'voice' ? true : false, //boolean record audio
+      localStorage.getItem('locale') || 'en', //source
+      filter.asr.inferenceEndPoint, //inference endpoint
+      '' //gender
+    );
     // const apiObj = new ComputeAPI(
     //   filter.asr.value, //modelId
     //   type === 'url' ? url : base, //input URL
@@ -183,20 +193,20 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
     // );
 
     // console.log('ghji:', { body: apiObj.getBody() });
-    // fetch(apiObj.apiEndPoint(), {
-    //   method: 'post',
-    //   body: JSON.stringify(apiObj.getBody()),
-    //   headers: apiObj.getHeaders().headers,
-    // })
-    //   .then(async (resp) => {
-    //     let rsp_data = await resp.json();
-    //     if (resp.ok && rsp_data !== null) {
-    //       setOutput((prev) => ({ ...prev, asr: rsp_data.data.source }));
-    //       setInputMsg(rsp_data.data.source);
-    //       setSuggestEditValues((prev) => ({
-    //         ...prev,
-    //         asr: rsp_data.data.source,
-    //       }));
+    fetch(apiObj.apiEndPoint(), {
+      method: 'post',
+      body: JSON.stringify(apiObj.getBody()),
+      headers: apiObj.getHeaders().headers,
+    })
+      .then(async (resp) => {
+        let rsp_data = await resp.json();
+        if (resp.ok && rsp_data !== null) {
+          setOutput((prev) => ({ ...prev, asr: rsp_data.data.source }));
+          setInputMsg(rsp_data.data.source);
+          setSuggestEditValues((prev) => ({
+            ...prev,
+            asr: rsp_data.data.source,
+          }));
 
     // const obj = new ComputeAPI(
     //   filter.translation.value,
@@ -252,13 +262,13 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
     //       }
     //     } else {
     //       toast.error(rsp_data.message);
-    //     }
-    //   })
-    //   .catch(async (error) => {
-    //     toast.error(
-    //       'Unable to process your request at the moment. Please try after sometime.'
-    //     );
-    //   });
+        }
+      })
+      .catch(async (error) => {
+        toast.error(
+          'Unable to process your request at the moment. Please try after sometime.'
+        );
+      });
     //   } else {
     //     toast.error(rsp_data.message);
     //   }

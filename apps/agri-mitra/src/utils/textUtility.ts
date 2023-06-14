@@ -4,15 +4,15 @@ export const getInitialMsgs = (t: any, flags: any): any => {
       buttonChoices: [
         {
           key: '1',
-          text: 'मेरा पैसा कहाँ है?',
+          text:  `${t('message.example_ques_one')}`,
         },
         {
           key: '2',
-          text: 'मेरे आवेदन की स्थिति क्या है?',
+          text:  `${t('message.example_ques_two')}`,
         },
         {
           key: '3',
-          text: 'अपना पैसा पाने के लिए मुझे किससे बात करने की आवश्यकता है?',
+          text:  `${t('message.example_ques_three')}`,
         },
       ],
       text: t('label.examples'),

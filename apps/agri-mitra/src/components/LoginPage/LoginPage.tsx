@@ -15,12 +15,6 @@ const LoginPage: React.FC = () => {
   const [value, setValue] = React.useState('2');
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const t = useLocalization();
-
-  useEffect(()=>{
-    if(!(localStorage.getItem('locale') === 'en')){
-      localStorage.setItem('locale', 'en'); 
-    }
-  },[]);
   
   // Setting the input value
   const handleNumber: React.ChangeEventHandler = (
