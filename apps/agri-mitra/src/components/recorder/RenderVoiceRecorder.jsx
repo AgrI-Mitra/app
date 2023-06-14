@@ -124,8 +124,6 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
   }, [model_id_1, model_id_2]);
 
   const makeComputeAPICall = async (type) => {
-    const url =
-      'https://api.dhruva.ai4bharat.org/services/inference/asr?serviceId=ai4bharat%2Fconformer-multilingual-indo_aryan-gpu--t4';
     const headers = {
       'Content-Type': 'application/json',
       authorization: process.env.NEXT_PUBLIC_DHRUVA_AUTH,
@@ -151,6 +149,7 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
       });
 
       if (response.ok) {
+        toast.success(`${t('message.recorder_wait')}`);
         const text = await response.json();
         setInputMsg(text?.output?.[0]?.source);
         // setInputMsg('मेरा पैसा कहाँ है');
@@ -161,7 +160,6 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
       toast.error(`${t('message.recorder_error')}`);
     }
 
-    toast.success(`${t('message.recorder_wait')}`);
     setAudio(null);
 
     // const apiObj = new ComputeAPI(

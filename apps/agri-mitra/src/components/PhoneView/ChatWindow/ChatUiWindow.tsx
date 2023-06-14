@@ -163,6 +163,7 @@ const ChatUiWindow: React.FC = () => {
         type: getMsgType(msg),
         content: { text: msg?.text, data: { ...msg } },
         position: msg?.position ?? 'right',
+        messageId: msg?.messageId,
       })),
     [context?.messages]
   );
