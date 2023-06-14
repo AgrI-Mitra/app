@@ -36,8 +36,8 @@ function NavBar() {
   );
 
   const newChatHandler = useCallback(() => {
-    if(context?.loading){
-      toast.error(`${t("error.wait_new_chat")}`);
+    if (context?.loading) {
+      toast.error(`${t('error.wait_new_chat')}`);
       return;
     }
     const newConversationId = uuidv4();
@@ -58,23 +58,15 @@ function NavBar() {
             className={styles.iconContainer}>
             <Image src={plusIcon} alt="plusIcon" layout="responsive" />
           </div>
-          {t("label.new_chat")}
+          {t('label.new_chat')}
         </div>
+        <div className={styles.navbarHeading}>{t('label.title')}</div>
         <div className={styles.rightSideIcons}>
-          {flags?.show_share_button?.enabled && (
-            <div className={styles.iconContainer}>
-              <Image src={shareIcon} alt="shareIcon" layout="responsive" />
-            </div>
-          )}
-          {flags?.show_download_button?.enabled && (
-            <div className={styles.iconContainer}>
-              <Image
-                src={downloadIcon}
-                alt="downloadIcon"
-                layout="responsive"
-              />
-            </div>
-          )}
+          <div className={styles.imageContainer}>
+            <Image src={PhoneImg} alt="" width={40} height={40} />
+            <Image src={MOA} alt="" width={40} height={40} />
+            <Image src={Emblem} alt="" width={30} height={40} />
+          </div>
         </div>
       </div>
     );
@@ -97,10 +89,21 @@ function NavBar() {
             ଓଡ଼ିଆ
           </button> */}
         </div>
-        <div className={styles.imageContainer}>
-          <Image src={PhoneImg} alt="" width={60} height={60} />
-          <Image src={MOA} alt="" width={60} height={60} />
-          <Image src={Emblem} alt="" width={45} height={60} />
+        <div className={styles.newChatContainer}>
+          {/* <div
+            onClick={() => newChatHandler()}
+            className={styles.iconContainer}>
+            <Image src={plusIcon} alt="plusIcon" layout="responsive" />
+          </div>
+          {t('label.new_chat')} */}
+        </div>
+        <div className={styles.navbarHeading}>{t('label.title')}</div>
+        <div className={styles.rightSideIcons}>
+          <div className={styles.imageContainer}>
+            <Image src={PhoneImg} alt="" width={60} height={60} />
+            <Image src={MOA} alt="" width={60} height={60} />
+            <Image src={Emblem} alt="" width={45} height={60} />
+          </div>
         </div>
       </div>
     );

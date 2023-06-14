@@ -12,18 +12,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--darkgrey);
+  background-color: var(--bg-color);
   /* min-height: fit-content; */
   height: 70px;
 }
 
 .newChatContainer {
-  margin: 1vh;
+  margin-left: 2vh;
   display: flex;
   flex-direction: column;
-  color: #D0D0D0;
-  align-items: center;
+  color: var(--font);
+  align-items: flex-start;
   font-size: 12px;
+  width: 20%;
 }
 
 .iconContainer {
@@ -31,8 +32,16 @@
   width: 3.5vh;
 }
 
+.navbarHeading{
+  color: var(--secondarygreen);
+  font-size: 3vh;
+  font-weight: bold;
+  font-family: 'Mulish-bold', sans-serif;
+}
+
 .rightSideIcons {
   display: flex;
+  width: 35%;
   align-items: center;
   height: 100%;
 }

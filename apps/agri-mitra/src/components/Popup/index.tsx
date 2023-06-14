@@ -12,7 +12,6 @@ interface PopupProps {
 const Popup = (props: PopupProps) => {
   const context = useContext(AppContext);
   const [aadhaar, setAadhaar] = useState('');
-  const [message, setMessage] = useState(props.msg || '');
 
   const handleSend = () => {
     if (aadhaar.length !== 12) {
@@ -48,8 +47,7 @@ const Popup = (props: PopupProps) => {
     <>
     <div className={styles.popupOverlay}></div>
     <div className={styles.popup}>
-      <p>Your message: {message}</p>
-      <h2>Enter your Aadhar Number</h2>
+      <h2>अपना आधार नंबर / लाभार्थी आईडी दर्ज करें</h2>
       <input
         type="number"
         value={aadhaar}
@@ -63,8 +61,8 @@ const Popup = (props: PopupProps) => {
       />
 
       <div className={styles.popupButtons}>
-        <button onClick={handleSend}>Send</button>
-        <button onClick={handleClose}>Close</button>
+        <button onClick={handleSend}>भेजें</button>
+        <button onClick={handleClose}>बंद करें</button>
       </div>
     </div>
     </>
