@@ -6,6 +6,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  useRef,
 } from 'react';
 import { AppContext } from '.';
 import _ from 'underscore';
@@ -64,6 +65,8 @@ const ContextProvider: FC<{
   const [showPopUp, setShowPopUp] = useState(false);
   const [cookie, setCookie, removeCookie] = useCookies();
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const audioRef = useRef(null);
+
   console.log(messages);
 
   useEffect(() => {
@@ -396,6 +399,7 @@ const ContextProvider: FC<{
       setShowPopUp,
       isAudioPlaying,
       setIsAudioPlaying,
+      audioRef,
     }),
     [
       locale,
@@ -424,6 +428,7 @@ const ContextProvider: FC<{
       setShowPopUp,
       isAudioPlaying,
       setIsAudioPlaying,
+      audioRef,
     ]
   );
 

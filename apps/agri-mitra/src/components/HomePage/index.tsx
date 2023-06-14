@@ -105,6 +105,7 @@ const HomePage: NextPage = () => {
       if (context?.socketSession && context?.newSocket?.connected) {
         console.log('clearing mssgs');
         context?.setMessages([]);
+        setInputMsg(msg);
         context?.setShowPopUp(true);
       } else {
         toast.error(t('error.disconnected'));
