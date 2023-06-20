@@ -155,8 +155,26 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
 
   const ttsHandler = useCallback(
     async (text: string) => {
+      let modelId;
+      const lang = localStorage.getItem('locale') || 'en';
+      switch(lang){
+        case 'bn':
+          modelId = '621774da7c69fa1fc5bba7d6';
+          break;
+        case 'en':
+          modelId = '623ac7b27c69fa1fc5bba7df';
+          break;
+        case 'ta':
+          modelId = '61ea3b171121fa5fec13aeb1';
+          break;
+        case 'te':
+          modelId = '620cd101bedccf5280e4eb26';
+          break;
+        default:
+          modelId = '61ea3ab41121fa5fec13aeaf'
+      }
       const obj = new ComputeAPI(
-        process.env.NEXT_PUBLIC_TTS_MODEL_ID,
+        modelId,
         text,
         'tts',
         '',
@@ -226,7 +244,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
               className="onHover"
               style={{
                 fontWeight: 600,
-                fontSize: '1rem',
+                fontSize: '1.2rem',
                 color:
                   content?.data?.position === 'right' ? 'white' : 'var(--font)',
               }}>
@@ -261,7 +279,7 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
                     content?.data?.position === 'right'
                       ? 'white'
                       : 'var(--font)',
-                  fontSize: '10px',
+                  fontSize: '12px',
                 }}>
                 {getFormatedTime(
                   content?.data?.sentTimestamp ||

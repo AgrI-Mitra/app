@@ -10,7 +10,7 @@ import { NextPage } from 'next';
 import Menu from '../menu';
 import { getInitialMsgs } from '../../utils/textUtility';
 import { AppContext } from '../../context';
-
+import speakerIcon from '../../assets/icons/speakerHome.svg';
 import RightIcon from '../../assets/icons/right';
 import sunIcon from '../../assets/icons/sun.svg';
 import reloadIcon from '../../assets/icons/reload.svg';
@@ -22,6 +22,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { useFlags } from 'flagsmith/react';
 import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
 import Popup from '../Popup';
+import { textToSpeech } from '../../utils/textToSpeech';
+import ComputeAPI from '../recorder/Model/ModelSearch/HostedInference';
 
 const HomePage: NextPage = () => {
   const context = useContext(AppContext);
@@ -45,10 +47,6 @@ const HomePage: NextPage = () => {
   }, [t, flags]);
 
   useEffect(() => {
-    if(!(localStorage.getItem('locale') === 'en')){
-      localStorage.setItem('locale', 'en'); 
-    }
-
     context?.fetchIsDown(); // check if server is down
 
     if (!sessionStorage.getItem('conversationId')) {
@@ -119,6 +117,73 @@ const HomePage: NextPage = () => {
     [context, t]
   );
 
+  const ttsHandler = useCallback(
+    async (text: string) => {
+      let modelId;
+      const lang = localStorage.getItem('locale') || 'en';
+      // console.log(lang)
+      switch(lang){
+        case 'bn':
+          modelId = '621774da7c69fa1fc5bba7d6';
+          break;
+        case 'en':
+          modelId = '623ac7b27c69fa1fc5bba7df';
+          break;
+        case 'ta':
+          modelId = '61ea3b171121fa5fec13aeb1';
+          break;
+        case 'te':
+          modelId = '620cd101bedccf5280e4eb26';
+          break;
+        default:
+          modelId = '61ea3ab41121fa5fec13aeaf'
+      }
+      const obj = new ComputeAPI(
+        modelId,
+        text,
+        'tts',
+        '',
+        '',
+        '',
+        'female'
+      );
+      try {
+        let audio;
+        // if (!context?.audioRef.current) {
+          const res = await textToSpeech(obj);
+          audio = new Audio(res);
+        // }else{
+        //   audio = context?.audioRef.current;
+        // }
+
+        audio.addEventListener('ended', () => {
+          context && (context.audioRef.current = null);
+          context?.setIsAudioPlaying(false);
+        });
+
+        if (context?.audioRef.current === audio) {
+          if (context?.isAudioPlaying) {
+            audio.pause();
+          } else {
+            audio.play();
+          }
+          context?.setIsAudioPlaying(!context?.isAudioPlaying);
+        } else {
+          if (context?.audioRef.current) {
+            context?.audioRef.current.pause();
+          }
+          context && (context.audioRef.current = audio);
+          audio.play();
+          context?.setIsAudioPlaying(true);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [context?.isAudioPlaying, context?.context?.audioRef]
+  );
+
   return (
     <>
       {context?.showPopUp && <Popup msg={inputMsg} />}
@@ -141,21 +206,20 @@ const HomePage: NextPage = () => {
         <div className={styles.title}>{messages?.[0]?.payload?.text}</div>
         {messages?.[0]?.payload?.buttonChoices?.map((choice: any) => {
           return (
-            <button
-              onClick={() => sendMessage(choice.text)}
-              className={styles.buttonChoice}
-              key={choice.key}>
-              {choice.text}
-              <div className={styles.rightIcon}>
-                <RightIcon width="5.5vh" color="var(--secondarygreen)" />
+            <div key={choice.key} className={styles.buttonChoice}>
+              <button onClick={() => sendMessage(choice.text)}>
+                {choice.text}
+              </button>
+              <div className={styles.rightIcon} onClick={() => ttsHandler(choice.text)}>
+                <Image src={speakerIcon} alt="" layout="responsive" />
               </div>
-            </button>
+            </div>
           );
         })}
         <form onSubmit={(event) => event?.preventDefault()}>
           <div className={styles.inputBox}>
             <div>
-              <RenderVoiceRecorder setInputMsg={setInputMsg} />
+              <RenderVoiceRecorder setInputMsg={setInputMsg} wordToNumber={false}/>
             </div>
             <input
               type="text"

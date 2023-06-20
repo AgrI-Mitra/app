@@ -23,7 +23,7 @@
 .userInfo {
   padding: 0.5vh;
   margin-left: 2vh;
-  font-size: 2vh;
+  font-size: 2.5vh;
   height: 10vh;
   display: flex;
   flex-direction: column;
@@ -36,7 +36,7 @@
   justify-content: center;
   height: 8vh;
   margin-left: 2vh;
-  font-size: 2vh;
+  font-size: 2.5vh;
 }
 
 .icon1 {

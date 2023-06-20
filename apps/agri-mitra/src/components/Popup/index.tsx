@@ -4,6 +4,7 @@ import { AppContext } from '../../context';
 import router from 'next/router';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
+import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
 
 interface PopupProps {
   msg: string;
@@ -20,7 +21,7 @@ const Popup = (props: PopupProps) => {
       if (router.pathname === '/') {
         router.push('/chat');
       }
-      try{
+      try {
         // axios
         // .get(
         //   `${process.env.NEXT_PUBLIC_BASE_URL}/user/error/${aadhaar}`,
@@ -34,7 +35,7 @@ const Popup = (props: PopupProps) => {
         // })
         context?.sendMessage(props.msg.trim());
         context?.setShowPopUp(false);
-      }catch(err){
+      } catch (err) {
         console.error(err);
       }
     }
@@ -45,26 +46,26 @@ const Popup = (props: PopupProps) => {
 
   return (
     <>
-    <div className={styles.popupOverlay}></div>
-    <div className={styles.popup}>
-      <h2>अपना आधार नंबर / लाभार्थी आईडी दर्ज करें</h2>
-      <input
-        type="number"
-        value={aadhaar}
-        onChange={(e) => {
-          if (e.target.value.length <= 12) {
-            // check length of input before updating state
-            setAadhaar(e.target.value);
-          }
-        }}
-        maxLength={12} // add maxLength attribute
-      />
-
-      <div className={styles.popupButtons}>
-        <button onClick={handleSend}>भेजें</button>
-        <button onClick={handleClose}>बंद करें</button>
+      <div className={styles.popupOverlay}></div>
+      <div className={styles.popup}>
+        <h2>अपना आधार नंबर / लाभार्थी आईडी दर्ज करें</h2>
+        <input
+          // type="number"
+          value={aadhaar}
+          onChange={(e) => {
+            // if (e.target.value.length <= 12) {
+              // check length of input before updating state
+              setAadhaar(e.target.value);
+            // }
+          }}
+          // maxLength={12} // add maxLength attribute
+        />
+        <div className={styles.popupButtons}>
+          <RenderVoiceRecorder setInputMsg={setAadhaar} wordToNumber={true} />
+          <button onClick={handleClose}>बंद करें</button>
+          <button onClick={handleSend}>भेजें</button>
+        </div>
       </div>
-    </div>
     </>
   );
 };

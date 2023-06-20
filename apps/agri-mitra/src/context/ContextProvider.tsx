@@ -27,8 +27,14 @@ function loadMessages(locale: string) {
   switch (locale) {
     case 'en':
       return import('../../lang/en.json');
-    case 'or':
-      return import('../../lang/en.json');
+    case 'hi':
+      return import('../../lang/hi.json');
+    case 'bn':
+      return import('../../lang/bn.json');
+    case 'ta':
+      return import('../../lang/ta.json');
+    case 'te':
+      return import('../../lang/te.json');
     default:
       return import('../../lang/en.json');
   }
@@ -445,7 +451,7 @@ const ContextProvider: FC<{
 const SSR: FC<{ children: ReactElement }> = ({ children }) => {
   const defaultLang = flagsmith.getValue('default_lang', { fallback: 'or' });
   const [locale, setLocale] = useState(
-    localStorage.getItem('locale') || defaultLang
+    localStorage.getItem('locale') || 'en'
   );
   const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
     null

@@ -27,7 +27,12 @@
   width: 20%;
 }
 
+.newChatContainer p {
+  font-size: 14px;
+}
+
 .iconContainer {
+  margin-left: 6px;
   height: 3.5vh;
   width: 3.5vh;
 }
