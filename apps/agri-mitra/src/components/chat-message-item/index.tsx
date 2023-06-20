@@ -159,19 +159,19 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
       const lang = localStorage.getItem('locale') || 'en';
       switch(lang){
         case 'bn':
-          modelId = '6348db11fb796d5e100d4ffb';
+          modelId = '621774da7c69fa1fc5bba7d6';
           break;
         case 'en':
-          modelId = '63f7384c2ff3ab138f88c64e';
+          modelId = '623ac7b27c69fa1fc5bba7df';
           break;
         case 'ta':
-          modelId = '6348db32fd966563f61bc2c3';
+          modelId = '61ea3b171121fa5fec13aeb1';
           break;
         case 'te':
-          modelId = '6348db37fb796d5e100d4ffe';
+          modelId = '620cd101bedccf5280e4eb26';
           break;
         default:
-          modelId = '633c021bfb796d5e100d4ff9'
+          modelId = '61ea3ab41121fa5fec13aeaf'
       }
       const obj = new ComputeAPI(
         modelId,
