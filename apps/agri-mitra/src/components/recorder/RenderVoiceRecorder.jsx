@@ -11,7 +11,7 @@ import { AppContext } from '../../context';
 import { useLocalization } from '../../hooks';
 import flagsmith from 'flagsmith/isomorphic';
 
-const RenderVoiceRecorder = ({ setInputMsg }) => {
+const RenderVoiceRecorder = ({ setInputMsg, wordToNumber }) => {
   const model_id_1 = flagsmith.getValue('model_id_1');
   const model_id_2 = flagsmith.getValue('model_id_2');
   const t = useLocalization();
@@ -71,6 +71,67 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
     });
   };
 
+  function wordToNumber(word) {
+    const numberWords = {
+      zero: 0,
+      one: 1,
+      two: 2,
+      three: 3,
+      four: 4,
+      five: 5,
+      six: 6,
+      seven: 7,
+      eight: 8,
+      nine: 9,
+      ten: 10,
+      eleven: 11,
+      twelve: 12,
+      thirteen: 13,
+      fourteen: 14,
+      fifteen: 15,
+      sixteen: 16,
+      seventeen: 17,
+      eighteen: 18,
+      nineteen: 19,
+      twenty: 20,
+      thirty: 30,
+      forty: 40,
+      fifty: 50,
+      sixty: 60,
+      seventy: 70,
+      eighty: 80,
+      ninety: 90,
+      hundred: 100,
+      thousand: 1000,
+      million: 1000000,
+      billion: 1000000000,
+      trillion: 1000000000000,
+    };
+
+    const words = word.toLowerCase().split(/[ ,]+/);
+    // console.log("hi", words)
+    let currentNumber = '';
+
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+      // skip these words
+      if(word === 'and' || word === 'or') continue;
+
+      if (numberWords[word] || numberWords[word] === 0) {
+        currentNumber += numberWords[word];
+      } else if (word === 'and') {
+        continue;
+      } else if (word.includes('-')) {
+        const hyphenWords = word.split('-');
+        const first = hyphenWords[0];
+        const second = hyphenWords[1];
+        currentNumber += numberWords[first] + numberWords[second];
+      }
+    }
+
+    return currentNumber;
+  }
+
   useEffect(() => {
     if (data && base) {
       handleCompute();
@@ -116,8 +177,6 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
     return blob;
   };
 
-
-
   const makeComputeAPICall = async (type) => {
     // const headers = {
     //   'Content-Type': 'application/json',
@@ -137,7 +196,7 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
     // };
 
     // try {
-      toast.success(`${t('message.recorder_wait')}`);
+    toast.success(`${t('message.recorder_wait')}`);
     //   const response = await fetch('/api/stt', {
     //     method: 'POST',
     //     headers: headers,
@@ -157,11 +216,11 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
 
     setAudio(null);
 
-    const modelId = () => {
+    const modelId_ASR = () => {
       const lang = localStorage.getItem('locale') || 'en';
-      switch(lang){
+      switch (lang) {
         case 'hi':
-          return '64117455b1463435d2fbaec4';
+          return '620fb9fc7c69fa1fc5bba7be';
         case 'bn':
           return '6411746956e9de23f65b5426';
         case 'ta':
@@ -172,9 +231,24 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
           return '63ee09c3b95268521c70cd7c';
       }
     };
-    console.log("hello", modelId());
+    const modelId_TRANSLATION = () => {
+      const lang = localStorage.getItem('locale') || 'en';
+      switch (lang) {
+        case 'hi':
+          return '6110f8b7014fa35d5e767c48';
+        case 'bn':
+          return '6110f7bc014fa35d5e767c3b';
+        case 'ta':
+          return '6110f917014fa35d5e767c4e';
+        case 'te':
+          return '6110f924014fa35d5e767c4f';
+        default:
+          return '63ee09c3b95268521c70cd7c';
+      }
+    };
+    // console.log('hello', modelId_ASR());
     const apiObj = new ComputeAPI(
-      modelId(), //modelId
+      modelId_ASR(), //modelId
       type === 'url' ? url : base, //input URL
       'asr', //task
       type === 'voice' ? true : false, //boolean record audio
@@ -201,67 +275,99 @@ const RenderVoiceRecorder = ({ setInputMsg }) => {
       .then(async (resp) => {
         let rsp_data = await resp.json();
         if (resp.ok && rsp_data !== null) {
-          setOutput((prev) => ({ ...prev, asr: rsp_data.data.source }));
-          setInputMsg(rsp_data.data.source);
-          setSuggestEditValues((prev) => ({
-            ...prev,
-            asr: rsp_data.data.source,
-          }));
+          // console.log("hi", rsp_data.data.source);
+          if (wordToNumber) {
+            // translating other language words to english words
+            if (localStorage.getItem('locale') !== 'en') {
+              const obj = new ComputeAPI(
+                modelId_TRANSLATION(),
+                rsp_data.data.source,
+                'translation',
+                '',
+                '',
+                '',
+                ''
+              );
+              fetch(obj.apiEndPoint(), {
+                method: 'post',
+                body: JSON.stringify(obj.getBody()),
+                headers: obj.getHeaders().headers,
+              }).then(async (translationResp) => {
+                let rsp_data = await translationResp.json();
+                if (translationResp.ok) {
+                  // setOutput((prev) => ({
+                  //   ...prev,
+                  //   translation: rsp_data.output[0].target,
+                  // }));
+                  // setSuggestEditValues((prev) => ({
+                  //   ...prev,
+                  //   translation: rsp_data.output[0].target,
+                  // }));
+                }
+                // console.log("hi", rsp_data.output[0].target)
+                setInputMsg(wordToNumber(rsp_data.output[0].target));
+              });
+            } else setInputMsg(wordToNumber(rsp_data.data.source));
+          } else setInputMsg(rsp_data.data.source);
+          // setSuggestEditValues((prev) => ({
+          //   ...prev,
+          //   asr: rsp_data.data.source,
+          // }));
 
-    // const obj = new ComputeAPI(
-    //   filter.translation.value,
-    //   rsp_data.data.source,
-    //   'translation',
-    //   '',
-    //   '',
-    //   filter.translation.inferenceEndPoint,
-    //   ''
-    // );
-    // fetch(obj.apiEndPoint(), {
-    //   method: 'post',
-    //   body: JSON.stringify(obj.getBody()),
-    //   headers: obj.getHeaders().headers,
-    // })
-    //   .then(async (translationResp) => {
-    //     let rsp_data = await translationResp.json();
-    //     if (translationResp.ok) {
-    //       setOutput((prev) => ({
-    //         ...prev,
-    //         translation: rsp_data.output[0].target,
-    //       }));
-    //       setSuggestEditValues((prev) => ({
-    //         ...prev,
-    //         translation: rsp_data.output[0].target,
-    //       }));
-    // const obj = new ComputeAPI(
-    //   process.env.NEXT_PUBLIC_TTS_MODEL_ID,
-    //   "मेरा पैसा कहाँ है",
-    //   'tts',
-    //   '',
-    //   '',
-    //   filter.tts.inferenceEndPoint,
-    //   'female',
-    // );
-    // fetch(obj.apiEndPoint(), {
-    //   method: 'post',
-    //   headers: obj.getHeaders().headers,
-    //   body: JSON.stringify(obj.getBody()),
-    // })
-    //   .then(async (ttsResp) => {
-    //     let rsp_data = await ttsResp.json();
-    //     console.log("hello", rsp_data);
-    //     if (ttsResp.ok) {
-    //       if (rsp_data.audio[0].audioContent) {
-    //         const blob = b64toBlob(rsp_data.audio[0].audioContent, 'audio/wav');
-    //         setOutputBase64(rsp_data.audio[0].audioContent);
-    //         const urlBlob = window.URL.createObjectURL(blob);
-    //         setAudio(urlBlob);
-    //       } else {
-    //         setOutputBase64(rsp_data.audio[0].audioUri);
-    //         setAudio(rsp_data.audio[0].audioUri);
-    //       }
-    //     } else {
-    //       toast.error(rsp_data.message);
+          // const obj = new ComputeAPI(
+          //   filter.translation.value,
+          //   rsp_data.data.source,
+          //   'translation',
+          //   '',
+          //   '',
+          //   filter.translation.inferenceEndPoint,
+          //   ''
+          // );
+          // fetch(obj.apiEndPoint(), {
+          //   method: 'post',
+          //   body: JSON.stringify(obj.getBody()),
+          //   headers: obj.getHeaders().headers,
+          // })
+          //   .then(async (translationResp) => {
+          //     let rsp_data = await translationResp.json();
+          //     if (translationResp.ok) {
+          //       setOutput((prev) => ({
+          //         ...prev,
+          //         translation: rsp_data.output[0].target,
+          //       }));
+          //       setSuggestEditValues((prev) => ({
+          //         ...prev,
+          //         translation: rsp_data.output[0].target,
+          //       }));
+          // const obj = new ComputeAPI(
+          //   process.env.NEXT_PUBLIC_TTS_MODEL_ID,
+          //   "मेरा पैसा कहाँ है",
+          //   'tts',
+          //   '',
+          //   '',
+          //   filter.tts.inferenceEndPoint,
+          //   'female',
+          // );
+          // fetch(obj.apiEndPoint(), {
+          //   method: 'post',
+          //   headers: obj.getHeaders().headers,
+          //   body: JSON.stringify(obj.getBody()),
+          // })
+          //   .then(async (ttsResp) => {
+          //     let rsp_data = await ttsResp.json();
+          //     console.log("hello", rsp_data);
+          //     if (ttsResp.ok) {
+          //       if (rsp_data.audio[0].audioContent) {
+          //         const blob = b64toBlob(rsp_data.audio[0].audioContent, 'audio/wav');
+          //         setOutputBase64(rsp_data.audio[0].audioContent);
+          //         const urlBlob = window.URL.createObjectURL(blob);
+          //         setAudio(urlBlob);
+          //       } else {
+          //         setOutputBase64(rsp_data.audio[0].audioUri);
+          //         setAudio(rsp_data.audio[0].audioUri);
+          //       }
+          //     } else {
+          //       toast.error(rsp_data.message);
         }
       })
       .catch(async (error) => {

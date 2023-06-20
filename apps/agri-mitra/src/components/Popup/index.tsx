@@ -61,9 +61,9 @@ const Popup = (props: PopupProps) => {
           // maxLength={12} // add maxLength attribute
         />
         <div className={styles.popupButtons}>
-          <RenderVoiceRecorder setInputMsg={setAadhaar} />
-          <button onClick={handleSend}>भेजें</button>
+          <RenderVoiceRecorder setInputMsg={setAadhaar} wordToNumber={true} />
           <button onClick={handleClose}>बंद करें</button>
+          <button onClick={handleSend}>भेजें</button>
         </div>
       </div>
     </>
