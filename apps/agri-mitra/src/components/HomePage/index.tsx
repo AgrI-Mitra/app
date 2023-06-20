@@ -219,7 +219,7 @@ const HomePage: NextPage = () => {
         <form onSubmit={(event) => event?.preventDefault()}>
           <div className={styles.inputBox}>
             <div>
-              <RenderVoiceRecorder setInputMsg={setInputMsg} />
+              <RenderVoiceRecorder setInputMsg={setInputMsg} wordToNumber={false}/>
             </div>
             <input
               type="text"

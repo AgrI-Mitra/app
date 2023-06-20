@@ -11,7 +11,7 @@ import { AppContext } from '../../context';
 import { useLocalization } from '../../hooks';
 import flagsmith from 'flagsmith/isomorphic';
 
-const RenderVoiceRecorder = ({ setInputMsg, wordToNumber }) => {
+const RenderVoiceRecorder = ( props ) => {
   const model_id_1 = flagsmith.getValue('model_id_1');
   const model_id_2 = flagsmith.getValue('model_id_2');
   const t = useLocalization();
@@ -205,8 +205,8 @@ const RenderVoiceRecorder = ({ setInputMsg, wordToNumber }) => {
 
     //   if (response.ok) {
     //     const text = await response.json();
-    //     setInputMsg(text?.output?.[0]?.source);
-    //     // setInputMsg('मेरा पैसा कहाँ है');
+    //     props.setInputMsg(text?.output?.[0]?.source);
+    //     // props.setInputMsg('मेरा पैसा कहाँ है');
     //   } else {
     //     console.error('Error:', response.status);
     //   }
@@ -275,8 +275,9 @@ const RenderVoiceRecorder = ({ setInputMsg, wordToNumber }) => {
       .then(async (resp) => {
         let rsp_data = await resp.json();
         if (resp.ok && rsp_data !== null) {
-          // console.log("hi", rsp_data.data.source);
-          if (wordToNumber) {
+          console.log("hi", rsp_data.data.source);
+          console.log("hi", props.wordToNumber);
+          if (props.wordToNumber) {
             // translating other language words to english words
             if (localStorage.getItem('locale') !== 'en') {
               const obj = new ComputeAPI(
@@ -305,10 +306,10 @@ const RenderVoiceRecorder = ({ setInputMsg, wordToNumber }) => {
                   // }));
                 }
                 // console.log("hi", rsp_data.output[0].target)
-                setInputMsg(wordToNumber(rsp_data.output[0].target));
+                props.setInputMsg(wordToNumber(rsp_data.output[0].target));
               });
-            } else setInputMsg(wordToNumber(rsp_data.data.source));
-          } else setInputMsg(rsp_data.data.source);
+            } else props.setInputMsg(wordToNumber(rsp_data.data.source));
+          } else props.setInputMsg(rsp_data.data.source);
           // setSuggestEditValues((prev) => ({
           //   ...prev,
           //   asr: rsp_data.data.source,
