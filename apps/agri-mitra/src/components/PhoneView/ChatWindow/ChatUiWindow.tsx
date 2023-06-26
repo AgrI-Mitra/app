@@ -24,43 +24,43 @@ const ChatUiWindow: React.FC = () => {
   const context = useContext(AppContext);
   const [msg, setMsg] = useState('');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await context?.fetchIsDown();
-        if (!context?.isDown) {
-          const chatHistory = await axios.get(
-            `${
-              process.env.NEXT_PUBLIC_BASE_URL
-            }/user/chathistory/${sessionStorage.getItem('conversationId')}`,
-            {
-              headers: {
-                authorization: `Bearer ${localStorage.getItem('auth')}`,
-              },
-            }
-          );
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       await context?.fetchIsDown();
+  //       if (!context?.isDown) {
+  //         const chatHistory = await axios.get(
+  //           `${
+  //             process.env.NEXT_PUBLIC_BASE_URL
+  //           }/user/chathistory/${sessionStorage.getItem('conversationId')}`,
+  //           {
+  //             headers: {
+  //               authorization: `Bearer ${localStorage.getItem('auth')}`,
+  //             },
+  //           }
+  //         );
 
-          console.log('ghji:', chatHistory);
-          console.log('history:', chatHistory.data);
+  //         console.log('ghji:', chatHistory);
+  //         console.log('history:', chatHistory.data);
 
-          const normalizedChats = normalizedChat(chatHistory.data);
-          if (normalizedChats.length > 0) {
-            context?.setMessages(normalizedChats);
-          }
-        }
-      } catch (error: any) {
-        console.log(error);
-      }
-    };
-    !context?.loading && fetchData();
+  //         const normalizedChats = normalizedChat(chatHistory.data);
+  //         if (normalizedChats.length > 0) {
+  //           context?.setMessages(normalizedChats);
+  //         }
+  //       }
+  //     } catch (error: any) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   !context?.loading && fetchData();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    context?.setMessages,
-    context?.fetchIsDown,
-    context?.loading,
-    context?.isDown,
-  ]);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [
+  //   context?.setMessages,
+  //   context?.fetchIsDown,
+  //   context?.loading,
+  //   context?.isDown,
+  // ]);
 
   const normalizedChat = (chats: any): any => {
     console.log('in normalized');

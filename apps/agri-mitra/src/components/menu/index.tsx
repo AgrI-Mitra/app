@@ -17,21 +17,21 @@ const Menu: FC = () => {
   const router = useRouter();
 
   const urlChanger = (link: string) => {
-    if (cookies['access_token'] !== undefined) {
+    // if (cookies['access_token'] !== undefined) {
       if(link === '/history' && context?.loading){   
         toast.error(`${t("error.wait_new_chat")}`);
         return;        
     }
       router.push(link);
-    }
+    // }
   };
 
   const homeUrlChanger = useCallback(() => {
-    if (cookies['access_token'] !== undefined) {
+    // if (cookies['access_token'] !== undefined) {
       if(context?.messages?.length !== 0){
         router.push('/chat');
       }else router.push('/');
-    }
+    // }
   }, [context?.messages, cookies, router]);
 
   return (

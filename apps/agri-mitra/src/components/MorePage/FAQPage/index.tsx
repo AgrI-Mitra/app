@@ -70,7 +70,7 @@ const FAQPage: React.FC = () => {
       const link = flags?.[`${language}_pdf_link`]?.value;
       const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
-      window.open(link);
+      window?.open(link);
 
       fetch(proxyUrl + link, {
         method: 'GET',
@@ -78,7 +78,7 @@ const FAQPage: React.FC = () => {
       })
         .then((response) => response.blob())
         .then((blob) => {
-          const url = window.URL.createObjectURL(new Blob([blob]));
+          const url = window?.URL.createObjectURL(new Blob([blob]));
           const a = document.createElement('a');
           a.style.display = 'none';
           a.href = url;
@@ -87,7 +87,7 @@ const FAQPage: React.FC = () => {
           document.body.appendChild(a);
           a.click();
 
-          window.URL.revokeObjectURL(url);
+          window?.URL.revokeObjectURL(url);
           document.body.removeChild(a);
         })
         .catch((error) => {

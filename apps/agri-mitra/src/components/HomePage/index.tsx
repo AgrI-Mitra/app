@@ -37,14 +37,15 @@ const HomePage: NextPage = () => {
     'or_example_ques_two',
     'or_example_ques_three',
   ]);
-  const [messages, setMessages] = useState<Array<any>>([
-    getInitialMsgs(t, flags),
-  ]);
+  // const [messages, setMessages] = useState<Array<any>>([
+  //   getInitialMsgs(t, flags),
+  // ]);
+  const [messages, setMessages] = useState<Array<any>>([]);
   const [inputMsg, setInputMsg] = useState('');
 
-  useEffect(() => {
-    setMessages([getInitialMsgs(t, flags)]);
-  }, [t, flags]);
+  // useEffect(() => {
+  //   setMessages([getInitialMsgs(t, flags)]);
+  // }, [t, flags]);
 
   useEffect(() => {
     context?.fetchIsDown(); // check if server is down
@@ -122,7 +123,7 @@ const HomePage: NextPage = () => {
       let modelId;
       const lang = localStorage.getItem('locale') || 'en';
       // console.log(lang)
-      switch(lang){
+      switch (lang) {
         case 'bn':
           modelId = '621774da7c69fa1fc5bba7d6';
           break;
@@ -136,7 +137,7 @@ const HomePage: NextPage = () => {
           modelId = '620cd101bedccf5280e4eb26';
           break;
         default:
-          modelId = '61ea3ab41121fa5fec13aeaf'
+          modelId = '61ea3ab41121fa5fec13aeaf';
       }
       const obj = new ComputeAPI(
         modelId,
@@ -150,8 +151,8 @@ const HomePage: NextPage = () => {
       try {
         let audio;
         // if (!context?.audioRef.current) {
-          const res = await textToSpeech(obj);
-          audio = new Audio(res);
+        const res = await textToSpeech(obj);
+        audio = new Audio(res);
         // }else{
         //   audio = context?.audioRef.current;
         // }
@@ -200,8 +201,14 @@ const HomePage: NextPage = () => {
               </div>
           </div>
         )} */}
-        <div className={styles.sunIconContainer}>
+        {/* <div className={styles.sunIconContainer}>
           <Image src={sunIcon} alt="sunIcon" layout="responsive" />
+        </div> */}
+        <div className={styles.voiceRecorder}>
+          <RenderVoiceRecorder
+            setInputMsg={setInputMsg}
+            wordToNumber={false}
+          />
         </div>
         <div className={styles.title}>{messages?.[0]?.payload?.text}</div>
         {messages?.[0]?.payload?.buttonChoices?.map((choice: any) => {
@@ -210,7 +217,9 @@ const HomePage: NextPage = () => {
               <button onClick={() => sendMessage(choice.text)}>
                 {choice.text}
               </button>
-              <div className={styles.rightIcon} onClick={() => ttsHandler(choice.text)}>
+              <div
+                className={styles.rightIcon}
+                onClick={() => ttsHandler(choice.text)}>
                 <Image src={speakerIcon} alt="" layout="responsive" />
               </div>
             </div>
@@ -218,9 +227,6 @@ const HomePage: NextPage = () => {
         })}
         <form onSubmit={(event) => event?.preventDefault()}>
           <div className={styles.inputBox}>
-            <div>
-              <RenderVoiceRecorder setInputMsg={setInputMsg} wordToNumber={false}/>
-            </div>
             <input
               type="text"
               value={inputMsg}

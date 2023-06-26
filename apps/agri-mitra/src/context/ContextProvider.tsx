@@ -77,8 +77,8 @@ const ContextProvider: FC<{
 
   useEffect(() => {
     if (
-      (localStorage.getItem('userID') && localStorage.getItem('auth')) ||
-      isMobileAvailable
+      (localStorage.getItem('userID') && localStorage.getItem('auth'))
+      //  || isMobileAvailable
     ) {
       setNewSocket(
         io(URL, {
@@ -145,6 +145,8 @@ const ContextProvider: FC<{
       setIsMsgReceiving(false);
       //@ts-ignore
       const user = JSON.parse(localStorage.getItem('currentUser'));
+      // msg.content.title =
+      //   'प्रिय किसान, हमें यह बताते हुए खुशी हो रही है कि आपकी आवेदन प्रक्रिया लगभग पूरी हो चुकी है और आपके खाते में 9 जुलाई तक क्रेडिट कर दिया जाएगा';
 
       if (msg.content.msg_type.toUpperCase() === 'IMAGE') {
         updateMsgState({
@@ -450,9 +452,7 @@ const ContextProvider: FC<{
 
 const SSR: FC<{ children: ReactElement }> = ({ children }) => {
   const defaultLang = flagsmith.getValue('default_lang', { fallback: 'or' });
-  const [locale, setLocale] = useState(
-    localStorage.getItem('locale') || 'en'
-  );
+  const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en');
   const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
     null
   );

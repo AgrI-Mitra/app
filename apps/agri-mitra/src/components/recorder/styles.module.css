@@ -1,8 +1,8 @@
 .center {
-  display: block;
-  justify-content: center;
-  height: 45px;
-  width: 45px;
+  /* display: block; */
+  /* justify-content: center; */
+  /* height: 45px;
+  width: 45px; */
 }
 .centerAudio {
   display: flex;

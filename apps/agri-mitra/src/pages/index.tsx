@@ -12,9 +12,9 @@ const Home: NextPage = () => {
   const t = useLocalization();
   const context = useContext(AppContext);
   useEffect(() => {
-    if (localStorage.getItem("userID")) {
+    // if (localStorage.getItem("userID")) {
       context?.setIsMobileAvailable(true);
-    }
+    // }
   }, [context?.setIsMobileAvailable]);
 
   return (

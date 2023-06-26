@@ -2375,6 +2375,13 @@
     "minimatch" "^3.1.2"
     "strip-json-comments" "^3.1.1"
 
+"@fingerprintjs/fingerprintjs@^3.4.1":
+  "integrity" "sha512-i3TqlaIdF+4qDHP6OStMtLXCnvnoo2C156rNPm9/kIglUtnLAF45+sGkZZmVQB+58dDF0mNpaiqvKHNSR8J1Hg=="
+  "resolved" "https://registry.npmjs.org/@fingerprintjs/fingerprintjs/-/fingerprintjs-3.4.1.tgz"
+  "version" "3.4.1"
+  dependencies:
+    "tslib" "^2.4.1"
+
 "@formatjs/ecma402-abstract@1.14.3":
   "version" "1.14.3"
   dependencies:
@@ -17876,7 +17883,7 @@
 "tslib@^1.9.3":
   "version" "1.14.1"
 
-"tslib@^2.0.0", "tslib@^2.0.1", "tslib@^2.0.3", "tslib@^2.1.0", "tslib@^2.3.0", "tslib@^2.3.1", "tslib@^2.4.0":
+"tslib@^2.0.0", "tslib@^2.0.1", "tslib@^2.0.3", "tslib@^2.1.0", "tslib@^2.3.0", "tslib@^2.3.1", "tslib@^2.4.0", "tslib@^2.4.1":
   "version" "2.5.0"
 
 "tsutils@^3.21.0":

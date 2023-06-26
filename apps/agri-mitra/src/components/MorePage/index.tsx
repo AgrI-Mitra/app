@@ -24,11 +24,11 @@ const MorePage: React.FC = () => {
     localStorage.clear();
     sessionStorage.clear();
     context?.setMessages([]);
-    router.push('/login');
-    if(typeof window !== "undefined") window.location.reload();
+    router.push('/');
+    if(typeof window !== "undefined") window?.location.reload();
   }
 
-  const [welcome, profile, faqs, feedback, logoutLabel,more] =useMemo(()=>[t('label.welcome'),t('label.profile'),t('label.faqs'),t('label.feedback'),t('label.logout'),t('label.more')],[t])
+  const [welcome, profile, faqs, feedback, logoutLabel, more] =useMemo(()=>[t('label.welcome'),t('label.profile'),t('label.faqs'),t('label.feedback'),t('label.logout'),t('label.more')],[t])
   return (
     <>
       <div className={styles.main}>
@@ -41,7 +41,7 @@ const MorePage: React.FC = () => {
           <div className={styles.userInfo}>
             <p style={{ fontWeight: 'bold' }}>{welcome}</p>
             <p style={{ color: 'var(--grey)' }}>
-              +91 {localStorage.getItem('phoneNumber')}
+              {localStorage.getItem('phoneNumber') && `+91 ${localStorage.getItem('phoneNumber')}`}
             </p>
           </div>
         </div>

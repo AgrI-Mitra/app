@@ -11,6 +11,7 @@ import dynamic from 'next/dynamic';
 import flagsmith from 'flagsmith/isomorphic';
 import { FlagsmithProvider } from 'flagsmith/react';
 import { useLogin } from '../hooks';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 const LaunchPage = dynamic(() => import('../components/LaunchPage'), {
   ssr: false,
@@ -37,6 +38,16 @@ const App = ({ Component, pageProps }: AppProps) => {
     setTimeout(() => {
       setLaunch(false);
     }, 2500);
+
+    // Initialize an agent at application startup.
+    const fpPromise = FingerprintJS.load();
+
+    (async () => {
+      // Get the visitor identifier when you need it.
+      const fp = await fpPromise;
+      const result = await fp.get();
+      localStorage.setItem('userID', result.visitorId);
+    })();
   }, []);
 
   useEffect(() => {
@@ -53,32 +64,31 @@ const App = ({ Component, pageProps }: AppProps) => {
     getFlagSmithState();
   }, []);
 
-  const handleLoginRedirect = useCallback(() => {
-    if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
-      // already logged in then send to home
-      if (cookie['access_token'] && localStorage.getItem('userID')) {
-        router.push('/');
-      }
-    } else {
-      // not logged in then send to login page
-      if (!cookie['access_token'] || !localStorage.getItem('userID')) {
-        localStorage.clear();
-        sessionStorage.clear();
-        router.push('/login');
-      }
-    }
-  }, [cookie, router]);
+  // const handleLoginRedirect = useCallback(() => {
+  //   if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
+  //     // already logged in then send to home
+  //     if (cookie['access_token'] && localStorage.getItem('userID')) {
+  //       router.push('/');
+  //     }
+  //   } else {
+  //     // not logged in then send to login page
+  //     if (!cookie['access_token'] || !localStorage.getItem('userID')) {
+  //       localStorage.clear();
+  //       sessionStorage.clear();
+  //       router.push('/login');
+  //     }
+  //   }
+  // }, [cookie, router]);
 
-  useEffect(() => {
-    handleLoginRedirect();
-  }, [handleLoginRedirect]);
+  // useEffect(() => {
+  //   handleLoginRedirect();
+  // }, [handleLoginRedirect]);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      login();
-    }
-  }, [isAuthenticated, login]);
-
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     login();
+  //   }
+  // }, [isAuthenticated, login]);
 
   if (process.env.NODE_ENV === 'production') {
     globalThis.console.log = () => {};

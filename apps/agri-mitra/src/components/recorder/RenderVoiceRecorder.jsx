@@ -295,6 +295,7 @@ const RenderVoiceRecorder = ( props ) => {
                 headers: obj.getHeaders().headers,
               }).then(async (translationResp) => {
                 let rsp_data = await translationResp.json();
+                console.log("hi", wordToNumber(rsp_data.output[0].target))
                 if (translationResp.ok) {
                   // setOutput((prev) => ({
                   //   ...prev,
@@ -305,7 +306,6 @@ const RenderVoiceRecorder = ( props ) => {
                   //   translation: rsp_data.output[0].target,
                   // }));
                 }
-                // console.log("hi", rsp_data.output[0].target)
                 props.setInputMsg(wordToNumber(rsp_data.output[0].target));
               });
             } else props.setInputMsg(wordToNumber(rsp_data.data.source));
@@ -361,7 +361,7 @@ const RenderVoiceRecorder = ( props ) => {
           //       if (rsp_data.audio[0].audioContent) {
           //         const blob = b64toBlob(rsp_data.audio[0].audioContent, 'audio/wav');
           //         setOutputBase64(rsp_data.audio[0].audioContent);
-          //         const urlBlob = window.URL.createObjectURL(blob);
+          //         const urlBlob = window?.URL.createObjectURL(blob);
           //         setAudio(urlBlob);
           //       } else {
           //         setOutputBase64(rsp_data.audio[0].audioUri);
@@ -372,6 +372,7 @@ const RenderVoiceRecorder = ( props ) => {
         }
       })
       .catch(async (error) => {
+        console.error(error);
         toast.error(
           'Unable to process your request at the moment. Please try after sometime.'
         );
