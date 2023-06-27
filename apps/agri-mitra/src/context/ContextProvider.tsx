@@ -74,17 +74,12 @@ const ContextProvider: FC<{
   const audioRef = useRef(null);
 
   console.log(messages);
-
-  const socket = io(URL);
   useEffect(() => {
     if (
       localStorage.getItem("userID") &&
       localStorage.getItem("auth")
       //  || isMobileAvailable
     ) {
-      socket.on("connect", () => {
-        console.log("CLIENT CONNECTED"); // x8WIv7-mJelg7on_ALbx
-      });      
 
       setNewSocket(
         io(URL, {          
