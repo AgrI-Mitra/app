@@ -1,28 +1,28 @@
-import '../styles/globals.css';
-import type { AppProps } from 'next/app';
-import { ChakraProvider } from '@chakra-ui/react';
-import ContextProvider from '../context/ContextProvider';
-import { ReactElement, useCallback, useEffect, useState } from 'react';
-import 'chatui/dist/index.css';
-import { Toaster } from 'react-hot-toast';
-import { useCookies } from 'react-cookie';
-import { useRouter } from 'next/router';
-import dynamic from 'next/dynamic';
-import flagsmith from 'flagsmith/isomorphic';
-import { FlagsmithProvider } from 'flagsmith/react';
-import { useLogin } from '../hooks';
-import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import "../styles/globals.css";
+import type { AppProps } from "next/app";
+import { ChakraProvider } from "@chakra-ui/react";
+import ContextProvider from "../context/ContextProvider";
+import { ReactElement, useCallback, useEffect, useState } from "react";
+import "chatui/dist/index.css";
+import { Toaster } from "react-hot-toast";
+import { useCookies } from "react-cookie";
+import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+import flagsmith from "flagsmith/isomorphic";
+import { FlagsmithProvider } from "flagsmith/react";
+import { useLogin } from "../hooks";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
-const LaunchPage = dynamic(() => import('../components/LaunchPage'), {
+const LaunchPage = dynamic(() => import("../components/LaunchPage"), {
   ssr: false,
 });
-const NavBar = dynamic(() => import('../components/NavBar'), {
+const NavBar = dynamic(() => import("../components/NavBar"), {
   ssr: false,
 });
 function SafeHydrate({ children }: { children: ReactElement }) {
   return (
     <div suppressHydrationWarning>
-      {typeof window === 'undefined' ? null : children}
+      {typeof window === "undefined" ? null : children}
     </div>
   );
 }
@@ -46,7 +46,16 @@ const App = ({ Component, pageProps }: AppProps) => {
       // Get the visitor identifier when you need it.
       const fp = await fpPromise;
       const result = await fp.get();
-      localStorage.setItem('userID', result.visitorId);
+      const stringToUuid = (str: any) => {
+        str = str.replace("-", "");
+        return "xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx".replace(
+          /[x]/g,
+          function (c, p) {
+            return str[p % str.length];
+          }
+        );
+      };
+      localStorage.setItem("userID", stringToUuid(result?.visitorId));
     })();
   }, []);
 
@@ -54,7 +63,7 @@ const App = ({ Component, pageProps }: AppProps) => {
     const getFlagSmithState = async () => {
       await flagsmith.init({
         // api: process.env.NEXT_PUBLIC_FLAGSMITH_API,
-        environmentID: process.env.NEXT_PUBLIC_ENVIRONMENT_ID || '',
+        environmentID: process.env.NEXT_PUBLIC_ENVIRONMENT_ID || "",
       });
       if (flagsmith.getState()) {
         //@ts-ignore
@@ -90,7 +99,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   //   }
   // }, [isAuthenticated, login]);
 
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     globalThis.console.log = () => {};
   }
 
@@ -101,7 +110,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       <ChakraProvider>
         <FlagsmithProvider flagsmith={flagsmith} serverState={flagsmithState}>
           <ContextProvider>
-            <div style={{ height: '100%' }}>
+            <div style={{ height: "100%" }}>
               <Toaster position="top-center" reverseOrder={false} />
               <NavBar />
               <SafeHydrate>
