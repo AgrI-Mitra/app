@@ -77,16 +77,16 @@ const Popup = (props: PopupProps) => {
         const res = await response.json();
         console.log(res);
         if (res.status === 'OK') {
-          // If beneficiary ID are zero then wrong value entered
+          // If beneficiary ID count is zero then wrong value entered
           if (res.beneficiaryIdCount === 0) {
             toast.error(
-              'Dear user we are unable to find the requested beneficiaryID. Please enter correct beneficiaryID.'
+              'Dear user we are unable to find the requested beneficiaryID. Please enter correct detail.'
             );
-            // if more than one beneficiary then ask for aadhaar digits
-          } else if (res.beneficiaryIdCount > 1) {
+            // if more than one beneficiary ID then ask for aadhaar digits
+          } else if (res.beneficiaryIdCount > 1 && res.type === 'phoneNumber') {
             setShowInput(false);
             setShowAadhaar(true);
-            // if exactly one beneficiary then send otp
+            // if exactly one beneficiary ID then send otp
           } else {
             fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/sendotp/${input}`, {
               method: 'GET',
@@ -154,19 +154,19 @@ const Popup = (props: PopupProps) => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log('token:', { data });
-          if (data.params.status === 'Success') {
-            let expires = new Date();
-            expires.setTime(
-              expires.getTime() +
-                data.result.data.user.tokenExpirationInstant * 1000
-            );
-            removeCookie('access_token');
-            setCookie('access_token', data.result.data.user.token, {
-              path: '/',
-              expires,
-            });
-            // localStorage.setItem('auth', data.result.data.user.token);
+          // console.log('token:', { data });
+          if (data.status === 'OK') {
+          //   let expires = new Date();
+          //   expires.setTime(
+          //     expires.getTime() +
+          //       data.result.data.user.tokenExpirationInstant * 1000
+          //   );
+          //   removeCookie('access_token');
+          //   setCookie('access_token', data.result.data.user.token, {
+          //     path: '/',
+          //     expires,
+          //   });
+          // localStorage.setItem('auth', data.result.data.user.token);
             context?.setIsMobileAvailable(true);
             context?.sendMessage(props.msg.trim());
             context?.setShowPopUp(false);
