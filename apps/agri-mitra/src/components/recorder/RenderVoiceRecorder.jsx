@@ -9,11 +9,8 @@ import ComputeAPI from './Model/ModelSearch/HostedInference';
 import toast from 'react-hot-toast';
 import { AppContext } from '../../context';
 import { useLocalization } from '../../hooks';
-import flagsmith from 'flagsmith/isomorphic';
 
 const RenderVoiceRecorder = ( props ) => {
-  const model_id_1 = flagsmith.getValue('model_id_1');
-  const model_id_2 = flagsmith.getValue('model_id_2');
   const t = useLocalization();
   const [gender, setGender] = useState('female');
   const [recordAudio, setRecordAudio] = useState('');

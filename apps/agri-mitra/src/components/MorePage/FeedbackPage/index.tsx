@@ -11,7 +11,6 @@ import React, {
 } from 'react';
 import Menu from '../../menu';
 import ComingSoonPage from '../../coming-soon-page';
-import { useFlags } from 'flagsmith/react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { AppContext } from '../../../context';
@@ -22,7 +21,6 @@ const FeedbackPage: React.FC = () => {
   const context = useContext(AppContext);
   const [rating, setRating] = useState(1);
   const [review, setReview] = useState('');
-  const flags = useFlags(['show_feedback_page']);
 
   const [submitError, ratingSubmitted, reviewSubmitted, reviewSubmitError] =
     useMemo(
@@ -86,67 +84,69 @@ const FeedbackPage: React.FC = () => {
     [ratingSubmitted, reviewSubmitError, reviewSubmitted, submitError]
   );
 
-  if (!flags?.show_feedback_page?.enabled) {
-    return <ComingSoonPage />;
-  } else
-    return (
-      <>
-        <div className={styles.main}>
-          <div className={styles.title}>{feedback}</div>
-          <div className={styles.rating}>
-            <h1>{ratingLabel}</h1>
-            <div className={styles.stars}>
-              {Array.from({ length: 5 }, (_, index) => {
-                if (index + 1 <= rating) {
-                  return (
-                    <div
-                      onClick={() => setRating(index + 1)}
-                      key={index}
-                      className={styles.star}>
-                      <Image src={starIcon} alt="starIcon" width={50} height={50} />
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div
-                      onClick={() => setRating(index + 1)}
-                      key={index}
-                      className={styles.star}>
-                      <Image
-                        src={starOutlineIcon}
-                        alt="starOutlineIcon"
-                        width={50}
-                        height={50}
-                      />
-                    </div>
-                  );
-                }
-              })}
-            </div>
-            <p>{t('message.rating_description')}</p>
-            <button onClick={() => submitReview(rating)}>
-              {t('label.submit_review')}
-            </button>
+  return (
+    <>
+      <div className={styles.main}>
+        <div className={styles.title}>{feedback}</div>
+        <div className={styles.rating}>
+          <h1>{ratingLabel}</h1>
+          <div className={styles.stars}>
+            {Array.from({ length: 5 }, (_, index) => {
+              if (index + 1 <= rating) {
+                return (
+                  <div
+                    onClick={() => setRating(index + 1)}
+                    key={index}
+                    className={styles.star}>
+                    <Image
+                      src={starIcon}
+                      alt="starIcon"
+                      width={50}
+                      height={50}
+                    />
+                  </div>
+                );
+              } else {
+                return (
+                  <div
+                    onClick={() => setRating(index + 1)}
+                    key={index}
+                    className={styles.star}>
+                    <Image
+                      src={starOutlineIcon}
+                      alt="starOutlineIcon"
+                      width={50}
+                      height={50}
+                    />
+                  </div>
+                );
+              }
+            })}
           </div>
-          <div className={styles.review}>
-            <h1>{t('message.review')}</h1>
-            <textarea
-              value={review}
-              onChange={(e) => setReview(e.target.value)}
-              name="experience-feedback"
-              id="experience-feedback"
-              cols={35}
-              rows={5}
-              placeholder={t("message.review_description")}></textarea>
-
-            <button onClick={() => submitReview(review)}>
-              {t("label.submit_review")}
-            </button>
-          </div>
+          <p>{t('message.rating_description')}</p>
+          <button onClick={() => submitReview(rating)}>
+            {t('label.submit_review')}
+          </button>
         </div>
-        <Menu />
-      </>
-    );
+        <div className={styles.review}>
+          <h1>{t('message.review')}</h1>
+          <textarea
+            value={review}
+            onChange={(e) => setReview(e.target.value)}
+            name="experience-feedback"
+            id="experience-feedback"
+            cols={35}
+            rows={5}
+            placeholder={t('message.review_description')}></textarea>
+
+          <button onClick={() => submitReview(review)}>
+            {t('label.submit_review')}
+          </button>
+        </div>
+      </div>
+      <Menu />
+    </>
+  );
 };
 
 export default FeedbackPage;

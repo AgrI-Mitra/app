@@ -3,11 +3,9 @@ import callIcon from '../../assets/icons/call-icon.svg';
 import crossIcon from '../../assets/icons/crossIcon.svg';
 import styles from './index.module.css';
 import Image from 'next/image';
-import { useFlags } from 'flagsmith/react';
 import { useLocalization } from '../../hooks';
 
 const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
-  const flags = useFlags(['dialer_number']);
   const t = useLocalization();
 
   return (
@@ -22,12 +20,12 @@ const DialerPopup: React.FC<any> = ({ setShowDialerPopup }) => {
       </p>
       <div className={styles.dialerBox}>
         <a
-          href={`tel:${flags.dialer_number.value}`}
+          href={`tel:1551`}
           className={styles.footerTitle}>
           <div className={styles.callIconBox}>
             <Image src={callIcon} alt="callIcon" layout="responsive" />
           </div>
-          {t('label.dial')} {flags.dialer_number.value}
+          {t('label.dial')} 1551
         </a>
       </div>
     </div>

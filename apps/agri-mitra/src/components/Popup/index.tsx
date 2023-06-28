@@ -166,8 +166,7 @@ const Popup = (props: PopupProps) => {
               path: '/',
               expires,
             });
-
-            localStorage.setItem('auth', data.result.data.user.token);
+            // localStorage.setItem('auth', data.result.data.user.token);
             context?.setIsMobileAvailable(true);
             context?.sendMessage(props.msg.trim());
             context?.setShowPopUp(false);

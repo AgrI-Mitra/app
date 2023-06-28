@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   FC,
   ReactElement,
@@ -7,40 +7,38 @@ import {
   useMemo,
   useState,
   useRef,
-} from "react";
-import { AppContext } from ".";
-import _ from "underscore";
-import { v4 as uuidv4 } from "uuid";
-import { send } from "../socket";
-import { UserType } from "../types";
-import { IntlProvider } from "react-intl";
-import { useLocalization } from "../hooks";
-import toast from "react-hot-toast";
-import flagsmith from "flagsmith/isomorphic";
-import { io } from "socket.io-client";
-import { Button } from "@chakra-ui/react";
-import axios from "axios";
-import { useFlags } from "flagsmith/react";
-import { useCookies } from "react-cookie";
+} from 'react';
+import { AppContext } from '.';
+import _ from 'underscore';
+import { v4 as uuidv4 } from 'uuid';
+import { send } from '../socket';
+import { UserType } from '../types';
+import { IntlProvider } from 'react-intl';
+import { useLocalization } from '../hooks';
+import toast from 'react-hot-toast';
+import { io } from 'socket.io-client';
+import { Button } from '@chakra-ui/react';
+import axios from 'axios';
+import { useCookies } from 'react-cookie';
 
 function loadMessages(locale: string) {
   switch (locale) {
-    case "en":
-      return import("../../lang/en.json");
-    case "hi":
-      return import("../../lang/hi.json");
-    case "bn":
-      return import("../../lang/bn.json");
-    case "ta":
-      return import("../../lang/ta.json");
-    case "te":
-      return import("../../lang/te.json");
+    case 'en':
+      return import('../../lang/en.json');
+    case 'hi':
+      return import('../../lang/hi.json');
+    case 'bn':
+      return import('../../lang/bn.json');
+    case 'ta':
+      return import('../../lang/ta.json');
+    case 'te':
+      return import('../../lang/te.json');
     default:
-      return import("../../lang/en.json");
+      return import('../../lang/en.json');
   }
 }
 
-const URL = process.env.NEXT_PUBLIC_SOCKET_URL || "";
+const URL = process.env.NEXT_PUBLIC_SOCKET_URL || '';
 
 const ContextProvider: FC<{
   locale: any;
@@ -49,7 +47,6 @@ const ContextProvider: FC<{
   children: ReactElement;
 }> = ({ locale, children, localeMsgs, setLocale }) => {
   const t = useLocalization();
-  const flags = useFlags(["health_check_time"]);
   const [users, setUsers] = useState<UserType[]>([]);
   const [currentUser, setCurrentUser] = useState<UserType>();
   const [loading, setLoading] = useState(false);
@@ -58,13 +55,11 @@ const ContextProvider: FC<{
   const [socketSession, setSocketSession] = useState<any>();
   const [newSocket, setNewSocket] = useState<any>();
   const [conversationId, setConversationId] = useState<string | null>(
-    sessionStorage.getItem("conversationId")
+    sessionStorage.getItem('conversationId')
   );
   const [isMobileAvailable, setIsMobileAvailable] = useState(
-    localStorage.getItem("userID") ? true : false || false
+    localStorage.getItem('userID') ? true : false || false
   );
-  const timer1 = flagsmith.getValue("timer1", { fallback: 5000 });
-  const timer2 = flagsmith.getValue("timer2", { fallback: 25000 });
   const [isDown, setIsDown] = useState(true);
   const [showDialerPopup, setShowDialerPopup] = useState(false);
   const [isConnected, setIsConnected] = useState(newSocket?.connected || false);
@@ -76,23 +71,22 @@ const ContextProvider: FC<{
   console.log(messages);
   useEffect(() => {
     if (
-      localStorage.getItem("userID") &&
-      localStorage.getItem("auth")
+      localStorage.getItem('userID') 
+      // && localStorage.getItem('auth')
       //  || isMobileAvailable
     ) {
-
       setNewSocket(
-        io(URL, {          
+        io(URL, {
           transportOptions: {
             polling: {
               extraHeaders: {
-                Authorization: `Bearer ${localStorage.getItem("auth")}`,
-                channel: "akai",
+                // Authorization: `Bearer ${localStorage.getItem('auth')}`,
+                channel: 'akai',
               },
             },
           },
           query: {
-            deviceId: localStorage.getItem("userID"),
+            deviceId: localStorage.getItem('userID'),
           },
           autoConnect: false,
           // transports: ['polling', 'websocket'],
@@ -112,12 +106,12 @@ const ContextProvider: FC<{
       msg: { content: { title: string; choices: any }; messageId: string };
       media: any;
     }) => {
-      if (msg.content.title !== "") {
+      if (msg.content.title !== '') {
         const newMsg = {
           username: user?.name,
           text: msg.content.title,
           choices: msg.content.choices,
-          position: "left",
+          position: 'left',
           id: user?.id,
           botUuid: user?.id,
           reaction: 0,
@@ -130,53 +124,53 @@ const ContextProvider: FC<{
 
         //@ts-ignore
         if (conversationId === msg?.content?.conversationId)
-          setMessages((prev: any) => _.uniq([...prev, newMsg], ["messageId"]));
+          setMessages((prev: any) => _.uniq([...prev, newMsg], ['messageId']));
       }
     },
     [conversationId]
   );
 
-  console.log("erty:", { conversationId });
+  console.log('erty:', { conversationId });
 
   const onMessageReceived = useCallback(
     (msg: any): void => {
-      console.log("mssgs:", messages);
-      console.log("#-debug:", { msg });
+      console.log('mssgs:', messages);
+      console.log('#-debug:', { msg });
       setLoading(false);
       setIsMsgReceiving(false);
       //@ts-ignore
-      const user = JSON.parse(localStorage.getItem("currentUser"));
+      const user = JSON.parse(localStorage.getItem('currentUser'));
       // msg.content.title =
       //   'प्रिय किसान, हमें यह बताते हुए खुशी हो रही है कि आपकी आवेदन प्रक्रिया लगभग पूरी हो चुकी है और आपके खाते में 9 जुलाई तक क्रेडिट कर दिया जाएगा';
 
-      if (msg.content.msg_type.toUpperCase() === "IMAGE") {
+      if (msg.content.msg_type.toUpperCase() === 'IMAGE') {
         updateMsgState({
           user,
           msg,
           media: { imageUrl: msg?.content?.media_url },
         });
-      } else if (msg.content.msg_type.toUpperCase() === "AUDIO") {
+      } else if (msg.content.msg_type.toUpperCase() === 'AUDIO') {
         updateMsgState({
           user,
           msg,
           media: { audioUrl: msg?.content?.media_url },
         });
-      } else if (msg.content.msg_type.toUpperCase() === "VIDEO") {
+      } else if (msg.content.msg_type.toUpperCase() === 'VIDEO') {
         updateMsgState({
           user,
           msg,
           media: { videoUrl: msg?.content?.media_url },
         });
       } else if (
-        msg.content.msg_type.toUpperCase() === "DOCUMENT" ||
-        msg.content.msg_type.toUpperCase() === "FILE"
+        msg.content.msg_type.toUpperCase() === 'DOCUMENT' ||
+        msg.content.msg_type.toUpperCase() === 'FILE'
       ) {
         updateMsgState({
           user,
           msg,
           media: { fileUrl: msg?.content?.media_url },
         });
-      } else if (msg.content.msg_type.toUpperCase() === "TEXT") {
+      } else if (msg.content.msg_type.toUpperCase() === 'TEXT') {
         updateMsgState({ user, msg, media: {} });
       }
     },
@@ -228,17 +222,17 @@ const ContextProvider: FC<{
     }
 
     if (newSocket) {
-      newSocket.on("connect", onConnect);
-      newSocket.on("disconnect", onDisconnect);
-      newSocket.on("botResponse", onMessageReceived);
+      newSocket.on('connect', onConnect);
+      newSocket.on('disconnect', onDisconnect);
+      newSocket.on('botResponse', onMessageReceived);
 
-      newSocket.on("exception", onException);
-      newSocket.on("session", onSessionCreated);
+      newSocket.on('exception', onException);
+      newSocket.on('session', onSessionCreated);
     }
 
     return () => {
       if (newSocket) {
-        newSocket.off("disconnect", onDisconnect);
+        newSocket.off('disconnect', onDisconnect);
       }
     };
   }, [isConnected, newSocket, onMessageReceived]);
@@ -247,16 +241,16 @@ const ContextProvider: FC<{
     setCurrentUser({ ...newUser, active: true });
     // setMessages([]);
   }, []);
-  console.log("vbnmm:", { newSocket });
+  console.log('vbnmm:', { newSocket });
 
   //@ts-ignore
   const sendMessage = useCallback(
     (text: string, media: any, isVisibile = true): void => {
       if (
-        !localStorage.getItem("userID") ||
-        !sessionStorage.getItem("conversationId")
+        !localStorage.getItem('userID') ||
+        !sessionStorage.getItem('conversationId')
       ) {
-        removeCookie("access_token", { path: "/" });
+        removeCookie('access_token', { path: '/' });
         location?.reload();
         return;
       }
@@ -272,15 +266,14 @@ const ContextProvider: FC<{
                 onClick={() => {
                   onSocketConnect({ text });
                   toast.dismiss(to.id);
-                }}
-              >
-                {t("label.click")}
+                }}>
+                {t('label.click')}
               </Button>
-              {t("message.socket_disconnect_msg")}
+              {t('message.socket_disconnect_msg')}
             </span>
           ),
           {
-            icon: "",
+            icon: '',
             duration: 10000,
           }
         );
@@ -290,10 +283,10 @@ const ContextProvider: FC<{
       send({ text, socketSession, socket: newSocket, conversationId });
       if (isVisibile)
         if (media) {
-          if (media.mimeType.slice(0, 5) === "image") {
-          } else if (media.mimeType.slice(0, 5) === "audio" && isVisibile) {
-          } else if (media.mimeType.slice(0, 5) === "video") {
-          } else if (media.mimeType.slice(0, 11) === "application") {
+          if (media.mimeType.slice(0, 5) === 'image') {
+          } else if (media.mimeType.slice(0, 5) === 'audio' && isVisibile) {
+          } else if (media.mimeType.slice(0, 5) === 'video') {
+          } else if (media.mimeType.slice(0, 11) === 'application') {
           } else {
           }
         } else {
@@ -302,9 +295,9 @@ const ContextProvider: FC<{
           setMessages((prev: any) => [
             ...prev.map((prevMsg: any) => ({ ...prevMsg, disabled: true })),
             {
-              username: "state.username",
+              username: 'state.username',
               text: text,
-              position: "right",
+              position: 'right',
               botUuid: currentUser?.id,
               payload: { text },
               time: Date.now(),
@@ -329,28 +322,28 @@ const ContextProvider: FC<{
   const fetchIsDown = useCallback(async () => {
     try {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/health/${flags?.health_check_time?.value}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/health/20`
       );
       const status = res.data.status;
-      console.log("hie", status);
-      if (status === "OK") {
+      console.log('hie', status);
+      if (status === 'OK') {
         setIsDown(false);
       } else {
         setIsDown(true);
-        console.log("Server status is not OK");
+        console.log('Server status is not OK');
       }
     } catch (error) {
       console.error(error);
     }
-  }, [setIsDown, flags]);
+  }, [setIsDown]);
 
   useEffect(() => {
     if (!socketSession && newSocket) {
-      console.log("vbn:", { socketSession, newSocket });
+      console.log('vbn:', { socketSession, newSocket });
     }
   }, [newSocket, socketSession]);
 
-  console.log("vbn: aa", {
+  console.log('vbn: aa', {
     socketSession,
     newSocket,
     isConnected,
@@ -362,23 +355,23 @@ const ContextProvider: FC<{
     let secondTimer: any;
     const timer = setTimeout(() => {
       if (isMsgReceiving && loading) {
-        toast.error(`${t("message.taking_longer")}`);
+        toast.error(`${t('message.taking_longer')}`);
         secondTimer = setTimeout(() => {
           if (isMsgReceiving && loading) {
-            toast.error(`${t("message.retry")}`);
+            toast.error(`${t('message.retry')}`);
             setIsMsgReceiving(false);
             setLoading(false);
             fetchIsDown();
           }
-        }, timer2);
+        }, 25000);
       }
-    }, timer1);
+    }, 15000);
 
     return () => {
       clearTimeout(timer);
       clearTimeout(secondTimer);
     };
-  }, [fetchIsDown, isDown, isMsgReceiving, loading, t, timer1, timer2]);
+  }, [fetchIsDown, isDown, isMsgReceiving, loading, t]);
 
   const values = useMemo(
     () => ({
@@ -453,8 +446,7 @@ const ContextProvider: FC<{
 };
 
 const SSR: FC<{ children: ReactElement }> = ({ children }) => {
-  const defaultLang = flagsmith.getValue("default_lang", { fallback: "or" });
-  const [locale, setLocale] = useState(localStorage.getItem("locale") || "en");
+  const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en');
   const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
     null
   );
@@ -465,15 +457,14 @@ const SSR: FC<{ children: ReactElement }> = ({ children }) => {
     });
   }, [locale]);
 
-  if (typeof window === "undefined") return null;
+  if (typeof window === 'undefined') return null;
   return (
     //@ts-ignore
     <IntlProvider locale={locale} messages={localeMsgs}>
       <ContextProvider
         locale={locale}
         setLocale={setLocale}
-        localeMsgs={localeMsgs}
-      >
+        localeMsgs={localeMsgs}>
         {children}
       </ContextProvider>
     </IntlProvider>

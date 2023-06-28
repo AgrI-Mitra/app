@@ -8,16 +8,13 @@ import Image from 'next/image';
 import Menu from '../menu';
 import { useLocalization } from '../../hooks';
 import ComingSoonPage from '../coming-soon-page';
-import { useFlags } from 'flagsmith/react';
 import axios from 'axios';
 import _ from 'underscore';
 const HistoryPage: NextPage = () => {
   const [conversations, setConversations] = useState([]);
-  const flags = useFlags(['show_chat_history_page']);
   const t = useLocalization();
 
   useEffect(() => {
-
     axios
       .get(`${process.env.NEXT_PUBLIC_BASE_URL}/user/conversations`, {
         headers: {
@@ -42,51 +39,50 @@ const HistoryPage: NextPage = () => {
   }, []);
 
   // Function to delete conversation by conversationId
-  const deleteConversationById = useCallback((conversationIdToDelete: any) => {
-    const filteredConversations = [...conversations].filter(
-      (conversation: any) => conversation.conversationId !== conversationIdToDelete
-    );
-    setConversations(filteredConversations);
-  }, [conversations]);
-  
+  const deleteConversationById = useCallback(
+    (conversationIdToDelete: any) => {
+      const filteredConversations = [...conversations].filter(
+        (conversation: any) =>
+          conversation.conversationId !== conversationIdToDelete
+      );
+      setConversations(filteredConversations);
+    },
+    [conversations]
+  );
 
- 
-  if (!flags?.show_chat_history_page?.enabled) {
-    return <ComingSoonPage />;
-  } else
-    return (
-      <>
-        <div className={styles.main}>
-          <div className={styles.title}>{t('label.chats')}</div>
-          {/* <InputGroup>
+  return (
+    <>
+      <div className={styles.main}>
+        <div className={styles.title}>{t('label.chats')}</div>
+        {/* <InputGroup>
             <InputLeftElement pointerEvents="none">
               <Image src={searchIcon} alt="" width={20} height={20} />
             </InputLeftElement>
             <Input type="text" placeholder="Search" />
           </InputGroup> */}
-          <div>
-            {conversations.length > 0
-              ? conversations.map((conv: any) => {
-                  return (
-                    <ChatItem
-                      key={conv.id}
-                      name={conv.query}
-                      conversationId={conv.conversationId}
-                      deleteConversationById={deleteConversationById}
-                    />
-                  );
-                })
-              : (
-                  <div className={styles.noHistory}>
-                    <div>{t('label.no_history')}</div>
-                    <p>{t('message.no_history')}</p>
-                  </div>
-                )}
-          </div>
+        <div>
+          {conversations.length > 0 ? (
+            conversations.map((conv: any) => {
+              return (
+                <ChatItem
+                  key={conv.id}
+                  name={conv.query}
+                  conversationId={conv.conversationId}
+                  deleteConversationById={deleteConversationById}
+                />
+              );
+            })
+          ) : (
+            <div className={styles.noHistory}>
+              <div>{t('label.no_history')}</div>
+              <p>{t('message.no_history')}</p>
+            </div>
+          )}
         </div>
-        <Menu />
-      </>
-    );
+      </div>
+      <Menu />
+    </>
+  );
 };
 
 export default HistoryPage;
