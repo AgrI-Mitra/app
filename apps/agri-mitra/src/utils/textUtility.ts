@@ -1,4 +1,4 @@
-export const getInitialMsgs = (t: any, flags: any): any => {
+export const getInitialMsgs = (t: any): any => {
   return {
     payload: {
       buttonChoices: [

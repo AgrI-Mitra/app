@@ -32,10 +32,8 @@ import { ChatMessageItemPropType } from '../../types';
 import { getFormatedTime } from '../../utils/getUtcTime';
 import { useLocalization } from '../../hooks/useLocalization';
 import { getReactionUrl } from '../../utils/getUrls';
-import { useFlags } from 'flagsmith/react';
 import Image from 'next/image';
 import { Button } from '@chakra-ui/react';
-import flagsmith from 'flagsmith/isomorphic';
 import { textToSpeech } from '../../utils/textToSpeech';
 import ComputeAPI from '../recorder/Model/ModelSearch/HostedInference';
 
@@ -48,7 +46,6 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
   message,
   onSend,
 }) => {
-  const flags = useFlags(['show_msg_id']);
   const t = useLocalization();
   const context = useContext(AppContext);
   const [reaction, setReaction] = useState(message?.content?.data?.reaction);
@@ -258,19 +255,6 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
                     ? 'space-between'
                     : 'flex-end',
               }}>
-              {/* {content?.data?.position === "left" && flags?.show_msg_id?.enabled &&(
-                <span>
-                  <Button colorScheme='teal' variant='outline' size='xs' onClick={() => copyTextToClipboard(content?.data?.messageId).then(() => {
-                    toast.success("coppied");
-                  })
-                    .catch((err) => {
-                      console.log(err);
-                    })}>
-                    {content?.data?.messageId}
-                  </Button>
-
-                </span>)
-              } */}
               <span
                 style={{
                   display: 'flex',

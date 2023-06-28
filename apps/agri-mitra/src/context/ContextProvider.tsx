@@ -16,11 +16,9 @@ import { UserType } from '../types';
 import { IntlProvider } from 'react-intl';
 import { useLocalization } from '../hooks';
 import toast from 'react-hot-toast';
-import flagsmith from 'flagsmith/isomorphic';
 import { io } from 'socket.io-client';
 import { Button } from '@chakra-ui/react';
 import axios from 'axios';
-import { useFlags } from 'flagsmith/react';
 import { useCookies } from 'react-cookie';
 
 function loadMessages(locale: string) {
@@ -49,7 +47,6 @@ const ContextProvider: FC<{
   children: ReactElement;
 }> = ({ locale, children, localeMsgs, setLocale }) => {
   const t = useLocalization();
-  const flags = useFlags(['health_check_time']);
   const [users, setUsers] = useState<UserType[]>([]);
   const [currentUser, setCurrentUser] = useState<UserType>();
   const [loading, setLoading] = useState(false);
@@ -63,8 +60,6 @@ const ContextProvider: FC<{
   const [isMobileAvailable, setIsMobileAvailable] = useState(
     localStorage.getItem('userID') ? true : false || false
   );
-  const timer1 = flagsmith.getValue('timer1', { fallback: 5000 });
-  const timer2 = flagsmith.getValue('timer2', { fallback: 25000 });
   const [isDown, setIsDown] = useState(true);
   const [showDialerPopup, setShowDialerPopup] = useState(false);
   const [isConnected, setIsConnected] = useState(newSocket?.connected || false);
@@ -74,18 +69,18 @@ const ContextProvider: FC<{
   const audioRef = useRef(null);
 
   console.log(messages);
-
   useEffect(() => {
     if (
-      (localStorage.getItem('userID') && localStorage.getItem('auth')) ||
-      isMobileAvailable
+      localStorage.getItem('userID') 
+      // && localStorage.getItem('auth')
+      //  || isMobileAvailable
     ) {
       setNewSocket(
         io(URL, {
           transportOptions: {
             polling: {
               extraHeaders: {
-                Authorization: `Bearer ${localStorage.getItem('auth')}`,
+                // Authorization: `Bearer ${localStorage.getItem('auth')}`,
                 channel: 'akai',
               },
             },
@@ -145,6 +140,8 @@ const ContextProvider: FC<{
       setIsMsgReceiving(false);
       //@ts-ignore
       const user = JSON.parse(localStorage.getItem('currentUser'));
+      // msg.content.title =
+      //   'प्रिय किसान, हमें यह बताते हुए खुशी हो रही है कि आपकी आवेदन प्रक्रिया लगभग पूरी हो चुकी है और आपके खाते में 9 जुलाई तक क्रेडिट कर दिया जाएगा';
 
       if (msg.content.msg_type.toUpperCase() === 'IMAGE') {
         updateMsgState({
@@ -325,7 +322,7 @@ const ContextProvider: FC<{
   const fetchIsDown = useCallback(async () => {
     try {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/health/${flags?.health_check_time?.value}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/health/20`
       );
       const status = res.data.status;
       console.log('hie', status);
@@ -338,7 +335,7 @@ const ContextProvider: FC<{
     } catch (error) {
       console.error(error);
     }
-  }, [setIsDown, flags]);
+  }, [setIsDown]);
 
   useEffect(() => {
     if (!socketSession && newSocket) {
@@ -366,15 +363,15 @@ const ContextProvider: FC<{
             setLoading(false);
             fetchIsDown();
           }
-        }, timer2);
+        }, 25000);
       }
-    }, timer1);
+    }, 15000);
 
     return () => {
       clearTimeout(timer);
       clearTimeout(secondTimer);
     };
-  }, [fetchIsDown, isDown, isMsgReceiving, loading, t, timer1, timer2]);
+  }, [fetchIsDown, isDown, isMsgReceiving, loading, t]);
 
   const values = useMemo(
     () => ({
@@ -449,10 +446,7 @@ const ContextProvider: FC<{
 };
 
 const SSR: FC<{ children: ReactElement }> = ({ children }) => {
-  const defaultLang = flagsmith.getValue('default_lang', { fallback: 'or' });
-  const [locale, setLocale] = useState(
-    localStorage.getItem('locale') || 'en'
-  );
+  const [locale, setLocale] = useState(localStorage.getItem('locale') || 'en');
   const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
     null
   );

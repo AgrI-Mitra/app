@@ -53,7 +53,7 @@ export const useLogin = () => {
         localStorage.clear();
         sessionStorage.clear();
         router.push('/login');
-        if (typeof window !== 'undefined') window.location.reload();
+        if (typeof window !== 'undefined') window?.location.reload();
       }
     }
   }, [cookies.access_token, removeCookie, router]);

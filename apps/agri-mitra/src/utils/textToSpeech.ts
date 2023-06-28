@@ -32,7 +32,7 @@ export const textToSpeech = async (obj: any) => {
       const rsp_data = await ttsResp.json();
       if (rsp_data.audio[0].audioContent) {
         const blob = b64toBlob(rsp_data.audio[0].audioContent, 'audio/wav');
-        const urlBlob = window.URL.createObjectURL(blob);
+        const urlBlob = window?.URL.createObjectURL(blob);
         return urlBlob;
       } else {
         return rsp_data.audio[0].audioUri;
@@ -42,6 +42,7 @@ export const textToSpeech = async (obj: any) => {
       toast.error(errorData.message);
     }
   } catch (error) {
+    console.error(error);
     toast.error('Unable to process your request at the moment. Please try again later.');
   }
 };

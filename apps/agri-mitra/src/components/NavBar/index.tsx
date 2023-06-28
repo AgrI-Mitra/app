@@ -76,7 +76,7 @@ function NavBar() {
           <Select value={selectedLanguage} onChange={toggleLanguage}>
             <MenuItem value="en">English</MenuItem>
             <MenuItem value="hi">Hindi</MenuItem>
-            <MenuItem value="bn">Bengali</MenuItem>
+            <MenuItem value="bn">Bangla</MenuItem>
             <MenuItem value="ta">Tamil</MenuItem>
             <MenuItem value="te">Telugu</MenuItem>
           </Select>

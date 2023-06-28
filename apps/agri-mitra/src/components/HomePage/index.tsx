@@ -19,7 +19,6 @@ import Image from 'next/image';
 import { Button } from '@chakra-ui/react';
 import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
-import { useFlags } from 'flagsmith/react';
 import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
 import Popup from '../Popup';
 import { textToSpeech } from '../../utils/textToSpeech';
@@ -29,22 +28,16 @@ const HomePage: NextPage = () => {
   const context = useContext(AppContext);
   const t = useLocalization();
   const placeholder = useMemo(() => t('message.ask_ur_question'), [t]);
-  const flags = useFlags([
-    'en_example_ques_one',
-    'en_example_ques_two',
-    'en_example_ques_three',
-    'or_example_ques_one',
-    'or_example_ques_two',
-    'or_example_ques_three',
-  ]);
-  const [messages, setMessages] = useState<Array<any>>([
-    getInitialMsgs(t, flags),
-  ]);
+
+  // const [messages, setMessages] = useState<Array<any>>([
+  //   getInitialMsgs(t),
+  // ]);
+  const [messages, setMessages] = useState<Array<any>>([]);
   const [inputMsg, setInputMsg] = useState('');
 
-  useEffect(() => {
-    setMessages([getInitialMsgs(t, flags)]);
-  }, [t, flags]);
+  // useEffect(() => {
+  //   setMessages([getInitialMsgs(t)]);
+  // }, [t]);
 
   useEffect(() => {
     context?.fetchIsDown(); // check if server is down
@@ -100,15 +93,15 @@ const HomePage: NextPage = () => {
       //       return;
       //     }
       //   } else {
-      if (context?.socketSession && context?.newSocket?.connected) {
+      // if (context?.socketSession && context?.newSocket?.connected) {
         console.log('clearing mssgs');
         context?.setMessages([]);
         setInputMsg(msg);
         context?.setShowPopUp(true);
-      } else {
-        toast.error(t('error.disconnected'));
-        return;
-      }
+      // } else {
+      //   toast.error(t('error.disconnected'));
+      //   return;
+      // }
       // }
       // } catch (error) {
       //   console.error(error);
@@ -122,7 +115,7 @@ const HomePage: NextPage = () => {
       let modelId;
       const lang = localStorage.getItem('locale') || 'en';
       // console.log(lang)
-      switch(lang){
+      switch (lang) {
         case 'bn':
           modelId = '621774da7c69fa1fc5bba7d6';
           break;
@@ -136,7 +129,7 @@ const HomePage: NextPage = () => {
           modelId = '620cd101bedccf5280e4eb26';
           break;
         default:
-          modelId = '61ea3ab41121fa5fec13aeaf'
+          modelId = '61ea3ab41121fa5fec13aeaf';
       }
       const obj = new ComputeAPI(
         modelId,
@@ -150,8 +143,8 @@ const HomePage: NextPage = () => {
       try {
         let audio;
         // if (!context?.audioRef.current) {
-          const res = await textToSpeech(obj);
-          audio = new Audio(res);
+        const res = await textToSpeech(obj);
+        audio = new Audio(res);
         // }else{
         //   audio = context?.audioRef.current;
         // }
@@ -200,8 +193,14 @@ const HomePage: NextPage = () => {
               </div>
           </div>
         )} */}
-        <div className={styles.sunIconContainer}>
+        {/* <div className={styles.sunIconContainer}>
           <Image src={sunIcon} alt="sunIcon" layout="responsive" />
+        </div> */}
+        <div className={styles.voiceRecorder}>
+          <RenderVoiceRecorder
+            setInputMsg={setInputMsg}
+            wordToNumber={false}
+          />
         </div>
         <div className={styles.title}>{messages?.[0]?.payload?.text}</div>
         {messages?.[0]?.payload?.buttonChoices?.map((choice: any) => {
@@ -210,7 +209,9 @@ const HomePage: NextPage = () => {
               <button onClick={() => sendMessage(choice.text)}>
                 {choice.text}
               </button>
-              <div className={styles.rightIcon} onClick={() => ttsHandler(choice.text)}>
+              <div
+                className={styles.rightIcon}
+                onClick={() => ttsHandler(choice.text)}>
                 <Image src={speakerIcon} alt="" layout="responsive" />
               </div>
             </div>
@@ -218,9 +219,6 @@ const HomePage: NextPage = () => {
         })}
         <form onSubmit={(event) => event?.preventDefault()}>
           <div className={styles.inputBox}>
-            <div>
-              <RenderVoiceRecorder setInputMsg={setInputMsg} wordToNumber={false}/>
-            </div>
             <input
               type="text"
               value={inputMsg}
