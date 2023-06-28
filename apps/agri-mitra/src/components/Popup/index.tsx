@@ -8,6 +8,8 @@ import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
 import { useLocalization } from '../../hooks/useLocalization';
 import { FormattedMessage } from 'react-intl';
 import { useCookies } from 'react-cookie';
+import Image from 'next/image';
+import crossIcon from '../../assets/icons/crossIcon.svg';
 
 interface PopupProps {
   msg: string;
@@ -69,41 +71,52 @@ const Popup = (props: PopupProps) => {
 
   const handleSend = () => {
     // if (router.pathname === '/') {
-      // check whether to ask for aadhaar 4 digits or not
-      fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/user/linkedBeneficiaryIdsCount/${input}`,
-        { method: 'GET' }
-      ).then(async (response) => {
-        const res = await response.json();
-        console.log(res);
-        if (res.status === 'OK') {
-          // If beneficiary ID count is zero then wrong value entered
-          if (res.beneficiaryIdCount === 0) {
+    // check whether to ask for aadhaar 4 digits or not
+    sessionStorage.setItem('identifier', input);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/user/linkedBeneficiaryIdsCount/${input}`,
+      { method: 'GET' }
+    ).then(async (response) => {
+      const res = await response.json();
+      console.log(res);
+      if (res.status === 'OK') {
+        // If beneficiary ID count is zero then wrong value entered
+        if (res.beneficiaryIdCount === 0) {
+          if (res.type === 'phoneNumber') {
             toast.error(
-              'Dear user we are unable to find the requested beneficiaryID. Please enter correct detail.'
+              'Dear user, we are unable to find the requested phone number. Please check the input.'
             );
-            // if more than one beneficiary ID then ask for aadhaar digits
-          } else if (res.beneficiaryIdCount > 1 && res.type === 'phoneNumber') {
-            setShowInput(false);
-            setShowAadhaar(true);
-            // if exactly one beneficiary ID then send otp
-          } else {
-            fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/sendotp/${input}`, {
-              method: 'GET',
-            }).then((response) => {
-              if (response.status === 200) {
-                toast.success('OTP sent');
-                setShowInput(false);
-                setShowOtp(true);
-              } else {
-                toast.error(`${t('message.otp_not_sent')}`);
-              }
-            });
+          } else if (res.type === 'aadhaar') {
+            toast.error(
+              'Dear user, we are unable to find the requested Aadhaar number. Please check the input.'
+            );
+          } else if (res.type === 'beneficiaryId') {
+            toast.error(
+              'Dear user, we are unable to find the requested Beneficiary ID. Please check the input.'
+            );
           }
+          // if more than one beneficiary ID then ask for aadhaar digits
+        } else if (res.beneficiaryIdCount > 1 && res.type === 'phoneNumber') {
+          setShowInput(false);
+          setShowAadhaar(true);
+          // if exactly one beneficiary ID then send otp
         } else {
-          toast.error(res.error);
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/sendotp/${input}`, {
+            method: 'GET',
+          }).then((response) => {
+            if (response.status === 200) {
+              toast.success('OTP sent');
+              setShowInput(false);
+              setShowOtp(true);
+            } else {
+              toast.error(`${t('message.otp_not_sent')}`);
+            }
+          });
         }
-      });
+      } else {
+        toast.error(res.error);
+      }
+    });
     // }
   };
 
@@ -111,8 +124,15 @@ const Popup = (props: PopupProps) => {
     context?.setShowPopUp(false);
   };
 
+  const handleClear = () => {
+    setInput('');
+    setAadhaar('');
+    setOtp('');
+  };
+
   const handleAadhaarSubmit = () => {
-    if (aadhaar.length === 4) {
+    // checking if aadhaar is a 4 digit number only
+    if (aadhaar.length === 4 && /^\d{4}$/.test(aadhaar)) {
       fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/user/checkMapping?phoneNo=${input}&maskedAadhaar=${aadhaar}`,
         { method: 'GET' }
@@ -156,17 +176,17 @@ const Popup = (props: PopupProps) => {
         .then((data) => {
           // console.log('token:', { data });
           if (data.status === 'OK') {
-          //   let expires = new Date();
-          //   expires.setTime(
-          //     expires.getTime() +
-          //       data.result.data.user.tokenExpirationInstant * 1000
-          //   );
-          //   removeCookie('access_token');
-          //   setCookie('access_token', data.result.data.user.token, {
-          //     path: '/',
-          //     expires,
-          //   });
-          // localStorage.setItem('auth', data.result.data.user.token);
+            //   let expires = new Date();
+            //   expires.setTime(
+            //     expires.getTime() +
+            //       data.result.data.user.tokenExpirationInstant * 1000
+            //   );
+            //   removeCookie('access_token');
+            //   setCookie('access_token', data.result.data.user.token, {
+            //     path: '/',
+            //     expires,
+            //   });
+            // localStorage.setItem('auth', data.result.data.user.token);
             context?.setIsMobileAvailable(true);
             context?.sendMessage(props.msg.trim());
             context?.setShowPopUp(false);
@@ -188,22 +208,58 @@ const Popup = (props: PopupProps) => {
         {showInput && (
           <div>
             <h2>{t('label.popUpTitle')}</h2>
-            <input value={input} onChange={(e) => setInput(e.target.value)} />
+            <div className={styles.inputBox}>
+              <input
+                style={{ flex: input ? 0.88 : 1 }}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+              />
+              {input && (
+                <div
+                  style={{ flex: 0.12, display: 'flex', alignItems: 'center' }}
+                  onClick={handleClear}>
+                  <Image src={crossIcon} alt="" />
+                </div>
+              )}
+            </div>
           </div>
         )}
         {showAadhaar && (
           <div>
             <h2>{t('label.popUpTitle2')}</h2>
-            <input
-              value={aadhaar}
-              onChange={(e) => setAadhaar(e.target.value)}
-            />
+            <div className={styles.inputBox}>
+              <input
+                style={{ flex: input ? 0.88 : 1 }}
+                value={aadhaar}
+                onChange={(e) => setAadhaar(e.target.value)}
+              />
+              {aadhaar && (
+                <div
+                  style={{ flex: 0.12, display: 'flex', alignItems: 'center' }}
+                  onClick={handleClear}>
+                  <Image src={crossIcon} alt="" />
+                </div>
+              )}
+            </div>
           </div>
         )}
         {showOtp && (
           <div>
             <h2>{t('label.popUpTitle3')}</h2>
-            <input value={otp} onChange={(e) => setOtp(e.target.value)} />
+            <div className={styles.inputBox}>
+              <input
+                style={{ flex: input ? 0.88 : 1 }}
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+              />
+              {otp && (
+                <div
+                  style={{ flex: 0.12, display: 'flex', alignItems: 'center' }}
+                  onClick={handleClear}>
+                  <Image src={crossIcon} alt="" />
+                </div>
+              )}
+            </div>
 
             <div className={styles.resendOTP}>
               {countdown > 0 ? (

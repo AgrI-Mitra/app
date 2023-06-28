@@ -152,6 +152,8 @@ const ChatMessageItem: FC<ChatMessageItemPropType> = ({
 
   const ttsHandler = useCallback(
     async (text: string) => {
+      // removing line breaks from the text
+      text = text.replace(/(\r\n|\n|\r)/gm, ' ');
       let modelId;
       const lang = localStorage.getItem('locale') || 'en';
       switch(lang){

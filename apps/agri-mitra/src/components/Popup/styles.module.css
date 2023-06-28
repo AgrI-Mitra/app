@@ -4,7 +4,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
+  z-index: 11;
   background-color: rgba(0, 0, 0, 0.5);
 }
 
@@ -15,7 +15,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 2;
+  z-index: 12;
   background-color: var(--bg-color);
   border: 1px solid #ccc;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
@@ -35,6 +35,12 @@
 .popup p {
   margin-bottom: 1vh;
   text-align: left;
+}
+
+.inputBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .popup input {
@@ -66,20 +72,6 @@
 
 .popup button:hover {
   background-color: #999;
-}
-
-.pinInputField {
-  margin: auto !important;
-  text-align: center !important;
-  border-radius: 12px !important;
-  border: 2px solid darkgreen !important;
-  outline: none !important;
-  width: 45px !important;
-  height: 42px !important;
-  box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034),
-    0 6.7px 5.3px rgba(0, 0, 0, 0.048), 0 12.5px 10px rgba(0, 0, 0, 0.06),
-    0 22.3px 17.9px rgba(0, 0, 0, 0.072), 0 41.8px 33.4px rgba(0, 0, 0, 0.086),
-    0 100px 80px rgba(0, 0, 0, 0.12);
 }
 
 .resendOTP {
