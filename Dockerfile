@@ -1,9 +1,7 @@
 FROM node:16-alpine 
 WORKDIR /app
-COPY package.json ./
+COPY apps/agri-mitra .
 RUN npm install 
-
-COPY . .
 RUN npm run build
 
 ENV NODE_ENV production
