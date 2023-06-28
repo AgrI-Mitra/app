@@ -72,6 +72,7 @@ const Popup = (props: PopupProps) => {
   const handleSend = () => {
     // if (router.pathname === '/') {
     // check whether to ask for aadhaar 4 digits or not
+    sessionStorage.setItem('identifier', input);
     fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/user/linkedBeneficiaryIdsCount/${input}`,
       { method: 'GET' }
