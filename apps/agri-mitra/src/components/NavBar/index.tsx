@@ -21,6 +21,8 @@ function NavBar() {
     const storedLanguage = localStorage.getItem('locale');
     if (storedLanguage) {
       setSelectedLanguage(storedLanguage);
+    }else{
+      localStorage.setItem('locale', 'en');
     }
   }, []);
 
