@@ -276,7 +276,7 @@ const RenderVoiceRecorder = ( props ) => {
           console.log("hi", props.wordToNumber);
           if (props.wordToNumber) {
             // translating other language words to english words
-            if (localStorage.getItem('locale') !== 'en') {
+            if (localStorage.getItem('locale') && localStorage.getItem('locale') !== 'en') {
               const obj = new ComputeAPI(
                 modelId_TRANSLATION(),
                 rsp_data.data.source,
