@@ -71,7 +71,7 @@ const ContextProvider: FC<{
   console.log(messages);
   useEffect(() => {
     if (
-      localStorage.getItem('userID') 
+      localStorage.getItem('userID')
       // && localStorage.getItem('auth')
       //  || isMobileAvailable
     ) {
