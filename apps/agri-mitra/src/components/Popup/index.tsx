@@ -113,7 +113,7 @@ const Popup = (props: PopupProps) => {
       );
 
       const otpRes = await otpResponse.json();
-        console.log(otpRes)
+      console.log(otpRes);
       if (otpRes.status === 'NOT_OK') {
         const errorMsg = otpRes?.d?.output?.Message || otpRes?.error;
         toast.error(errorMsg);
