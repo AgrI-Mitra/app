@@ -51,6 +51,26 @@ const Popup = (props: PopupProps) => {
     return response
   }
 
+  const getUserDetails = async (type: string, input: string) => {
+    const data: any = {
+      method: 'POST',
+      body: JSON.stringify({
+        method: 'POST',
+        endPoint: '/ChatbotUserDetails',
+        data:{
+          "EncryptedRequest": `{\"Types\":\"${type}\",\"Values\":\"${input}\",\"Token\":\"${process.env.NEXT_PUBLIC_PM_KISAN_TOKEN}\"}`
+        }
+      }),
+      headers: {
+        "Content-Type": "Application/json"
+      }
+    }
+    const otpRes: any = await fetch(`api/pmKisanProxy`,data);
+    let response = await otpRes.json()
+    response = JSON.parse(response.d.output)
+    return response
+  }
+
   const sendOTP = async (input: string,type: string): Promise<any> => {
     const data: any = {
       method: 'POST',
@@ -184,28 +204,49 @@ const Popup = (props: PopupProps) => {
             context?.sendMessage(props.msg.trim());
             context?.setShowPopUp(false);
             let errors = await checkBeneficiaryStatus("Mobile",input)
-            if(errors.Rsponce == "True")
-            Object.entries(errors).forEach(([key, value]) => {
-              if(key!="Rsponce" && key != "Message"){
-                if(value){
-                  console.log(`ERRORVALUE: ${key} ${value}`);
-                  context?.onMessageReceived({
-                    content: {
-                      //@ts-ignore
-                      title: PMKisanErrors[`${value}`],
-                      choices: [],
-                      media_url: null,
-                      caption: null,
-                      msg_type: "text",
-                      conversationId: sessionStorage.getItem('conversationId'),
-                      messageId: uuidv4(),
-                      to: localStorage.getItem('userID')
-                    }
-                  })
+            if(errors.Rsponce == "True"){
+              let userDetails = await getUserDetails("Mobile",input)
+              if(userDetails.Rsponce=="True")
+              context?.onMessageReceived({
+                content: {
+                  //@ts-ignore
+                  title: `Hi ${userDetails.BeneficiaryName},
+Name: ${userDetails.BeneficiaryName}
+Father's Name: ${userDetails.FatherName}
+Date Of Birth: ${userDetails.DOB}
+Date Of Registration: ${userDetails.DateOfRegistration}
+Address: ${userDetails.Address}`
+                  ,
+                  choices: [],
+                  media_url: null,
+                  caption: null,
+                  msg_type: "text",
+                  conversationId: sessionStorage.getItem('conversationId'),
+                  messageId: uuidv4(),
+                  to: localStorage.getItem('userID')
                 }
-              }
-            });
-            else {
+              })
+              Object.entries(errors).forEach(([key, value]) => {
+                if(key!="Rsponce" && key != "Message"){
+                  if(value){
+                    console.log(`ERRORVALUE: ${key} ${value}`);
+                    context?.onMessageReceived({
+                      content: {
+                        //@ts-ignore
+                        title: PMKisanErrors[`${value}`],
+                        choices: [],
+                        media_url: null,
+                        caption: null,
+                        msg_type: "text",
+                        conversationId: sessionStorage.getItem('conversationId'),
+                        messageId: uuidv4(),
+                        to: localStorage.getItem('userID')
+                      }
+                    })
+                  }
+                }
+              });
+            } else {
               context?.setIsMsgReceiving(false)
               toast.error(errors.Message)
             }
