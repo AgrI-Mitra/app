@@ -15,8 +15,8 @@
     "NEXT_PUBLIC_FUS_AUTH",
     "NEXT_PUBLIC_DHRUVA_AUTH",
     "NEXT_PUBLIC_TTS_MODEL_ID",
-    "PM_KISAN_BASE_URL",
-    "PM_KISAN_TOKEN"
+    "NEXT_PUBLIC_PM_KISAN_BASE_URL",
+    "NEXT_PUBLIC_PM_KISAN_TOKEN"
   ],
 
   "globalDependencies": ["**/.env.*local"],
