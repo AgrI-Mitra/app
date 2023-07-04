@@ -6,7 +6,7 @@ export default async function handler(req, res) {
       let config = {
         method: method,
         maxBodyLength: Infinity,
-        url: `${process.env.PM_KISAN_BASE_URL}/${endPoint}`,
+        url: `${process.env.NEXT_PUBLIC_PM_KISAN_BASE_URL}/${endPoint}`,
         headers: { 
           'Content-Type': 'application/json'
         },
