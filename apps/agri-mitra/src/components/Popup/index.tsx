@@ -10,6 +10,8 @@ import { FormattedMessage } from 'react-intl';
 import { useCookies } from 'react-cookie';
 import Image from 'next/image';
 import crossIcon from '../../assets/icons/crossIcon.svg';
+import { v4 as uuidv4 } from 'uuid';
+import * as PMKisanErrors from './PMKisanErrors.json'
 
 interface PopupProps {
   msg: string;
@@ -29,6 +31,46 @@ const Popup = (props: PopupProps) => {
   const [countdownIntervalId, setCountdownIntervalId] = useState<any>(null);
   const [cookies, setCookie, removeCookie] = useCookies(['access_token']);
 
+  const checkBeneficiaryStatus = async (type: string, input: string) => {
+    const data: any = {
+      method: 'POST',
+      body: JSON.stringify({
+        method: 'POST',
+        endPoint: '/ChatbotBeneficiaryStatus',
+        data:{
+          "EncryptedRequest": `{\"Types\":\"${type}\",\"Values\":\"${input}\",\"Token\":\"${process.env.NEXT_PUBLIC_PM_KISAN_TOKEN}\"}`
+        }
+      }),
+      headers: {
+        "Content-Type": "Application/json"
+      }
+    }
+    const otpRes: any = await fetch(`api/pmKisanProxy`,data);
+    let response = await otpRes.json()
+    response = JSON.parse(response.d.output)
+    return response
+  }
+
+  const sendOTP = async (input: string,type: string): Promise<any> => {
+    const data: any = {
+      method: 'POST',
+      body: JSON.stringify({
+        method: 'POST',
+        endPoint: '/chatbototp',
+        data:{
+          "EncryptedRequest": `{\"Types\":\"${type}\",\"Values\":\"${input}\",\"Token\":\"${process.env.NEXT_PUBLIC_PM_KISAN_TOKEN}\"}`
+        }
+      }),
+      headers: {
+        "Content-Type": "Application/json"
+      }
+    }
+    const otpRes: any = await fetch(`api/pmKisanProxy`,data);
+    let response = await otpRes.json()
+    response = JSON.parse(response.d.output)
+    return response
+  }
+
   const resendOTP = useCallback(async () => {
     if (isResendingOTP) {
       toast.error(`${t('message.wait_resending_otp')}`);
@@ -37,10 +79,8 @@ const Popup = (props: PopupProps) => {
 
     setIsResendingOTP(true);
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/user/sendotp/${input}`
-      );
-      if (response.status === 200) {
+      let response = await sendOTP(input,"Mobile")
+      if (response.Rsponce === "True") {
         toast.success(`${t('message.otp_sent_again')}`);
         setOtp('');
         setCountdown(30);
@@ -72,53 +112,13 @@ const Popup = (props: PopupProps) => {
   const handleSend = async () => {
     try {
       sessionStorage.setItem('identifier', input);
-      // const response = await fetch(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/user/linkedBeneficiaryIdsCount/${input}`,
-      //   {
-      //     method: 'GET',
-      //   }
-      // );
-
-      // if (!response.ok) {
-      //   toast.error(response.statusText);
-      // }
-
-      // const res = await response.json();
-      // console.log(res);
-
-      // if (res.status === 'OK') {
-      //   if (res.beneficiaryIdCount === 0) {
-      //     if (res.type === 'phoneNumber') {
-      //       toast.error(
-      //         'Dear user, we are unable to find the requested phone number. Please check the input.'
-      //       );
-      //     } else if (res.type === 'aadhaar') {
-      //       toast.error(
-      //         'Dear user, we are unable to find the requested Aadhaar number. Please check the input.'
-      //       );
-      //     } else if (res.type === 'beneficiaryId') {
-      //       toast.error(
-      //         'Dear user, we are unable to find the requested Beneficiary ID. Please check the input.'
-      //       );
-      //     }
-      //   } else if (res.beneficiaryIdCount > 1 && res.type === 'phoneNumber') {
-      //     setShowInput(false);
-      //     setShowAadhaar(true);
-      //   } else {
-      const otpResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/user/sendotp/${input}`,
-        {
-          method: 'GET',
-        }
-      );
-
-      const otpRes = await otpResponse.json();
-        console.log(otpRes)
-      if (otpRes.status === 'NOT_OK') {
-        const errorMsg = otpRes?.d?.output?.Message || otpRes?.error;
+      let response = await sendOTP(input,"Mobile")
+      if (response.Rsponce === 'False') {
+        const errorMsg = response.Message;
+        console.log(errorMsg)
         toast.error(errorMsg);
         if (
-          otpRes.d.output.Message ===
+          response.Message ===
           'This mobile number taged with multiple records.'
         ) {
           setShowInput(false);
@@ -129,10 +129,6 @@ const Popup = (props: PopupProps) => {
         setShowInput(false);
         setShowOtp(true);
       }
-      // }
-      // } else {
-      //   toast.error(res.error);
-      // }
     } catch (error) {
       console.error(error);
     }
@@ -148,80 +144,78 @@ const Popup = (props: PopupProps) => {
     setOtp('');
   };
 
-  const handleAadhaarSubmit = () => {
+  const handleAadhaarSubmit = async () => {
     // checking if aadhaar is a 4 digit number only
     if (aadhaar.length === 4 && /^\d{4}$/.test(aadhaar)) {
-      // fetch(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/user/checkMapping?phoneNo=${input}&maskedAadhaar=${aadhaar}`,
-      //   { method: 'GET' }
-      // ).then(async (response) => {
-      //   const res = await response.json();
-      //   // if mapped to a phone number then only send otp
-      //   if (res.status) {
-      fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/user/sendotp/${input + aadhaar}`,
-        {
-          method: 'GET',
-        }
-      ).then(async (response) => {
-        const aadhaarRes = await response.json();
-        console.log('hey', aadhaarRes);
-        if (aadhaarRes.status === 'OK') {
-          toast.success('OTP sent');
-          setShowAadhaar(false);
-          setShowOtp(true);
-        } else {
-          // toast.error(`${t('message.otp_not_sent')}`);
-          toast.error(aadhaarRes.d.output.Message);
-        }
-      });
+      let response = await sendOTP(input + aadhaar,"MobileAadhaar")
+      if (response.Rsponce === 'True') {
+        toast.success('OTP sent');
+        setShowAadhaar(false);
+        setShowOtp(true);
+      } else {
+        toast.error(response.Message);
+      }
     } else {
       toast.error('Phone number not found');
     }
-    //   });
-    // } else {
-    //   toast.error('Please enter last 4 digits of your Aadhaar.');
-    // }
   };
 
-  const handleOTPSubmit = () => {
+  const handleOTPSubmit = async () => {
     if (otp.length === 4) {
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/verifyotp`, {
-        method: 'POST',
-        body: JSON.stringify({
-          identifier: input,
-          otp: otp,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          // console.log('token:', { data });
-          if (data.status === 'OK') {
-            //   let expires = new Date();
-            //   expires.setTime(
-            //     expires.getTime() +
-            //       data.result.data.user.tokenExpirationInstant * 1000
-            //   );
-            //   removeCookie('access_token');
-            //   setCookie('access_token', data.result.data.user.token, {
-            //     path: '/',
-            //     expires,
-            //   });
-            // localStorage.setItem('auth', data.result.data.user.token);
+        try{
+          const data: any = {
+            method: 'POST',
+            body: JSON.stringify({
+              method: 'POST',
+              endPoint: '/ChatbotOTPVerified',
+              data:{
+                "EncryptedRequest": `{\"Types\":\"Mobile\",\"Values\":\"${input}\",\"Token\":\"${process.env.NEXT_PUBLIC_PM_KISAN_TOKEN}\",\"OTP\":\"${otp}\"}`
+              }
+            }),
+            headers: {
+              "Content-Type": "Application/json"
+            }
+          }
+          const otpRes: any = await fetch(`api/pmKisanProxy`,data);
+          let response = await otpRes.json()
+          response = JSON.parse(response.d.output)
+          if (response.Rsponce === 'True') {
             context?.setIsMobileAvailable(true);
             context?.sendMessage(props.msg.trim());
             context?.setShowPopUp(false);
+            let errors = await checkBeneficiaryStatus("Mobile",input)
+            if(errors.Rsponce == "True")
+            Object.entries(errors).forEach(([key, value]) => {
+              if(key!="Rsponce" && key != "Message"){
+                if(value){
+                  console.log(`ERRORVALUE: ${key} ${value}`);
+                  context?.onMessageReceived({
+                    content: {
+                      //@ts-ignore
+                      title: PMKisanErrors[`${value}`],
+                      choices: [],
+                      media_url: null,
+                      caption: null,
+                      msg_type: "text",
+                      conversationId: sessionStorage.getItem('conversationId'),
+                      messageId: uuidv4(),
+                      to: localStorage.getItem('userID')
+                    }
+                  })
+                }
+              }
+            });
+            else {
+              context?.setIsMsgReceiving(false)
+              toast.error(errors.Message)
+            }
             router.push('/chat');
           } else {
             toast.error(`${t('message.invalid_otp')}`);
           }
-        })
-        .catch((err) => {
+        } catch(err) {
           console.log(err);
-        });
+        }
     }
   };
 
