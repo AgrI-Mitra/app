@@ -167,7 +167,7 @@ const Popup = (props: PopupProps) => {
   const handleAadhaarSubmit = async () => {
     // checking if aadhaar is a 4 digit number only
     if (aadhaar.length === 4 && /^\d{4}$/.test(aadhaar)) {
-      let response = await sendOTP(input + aadhaar,"MobileAadhaar")
+      let response = await sendOTP(input + aadhaar,"MobileAadhar")
       if (response.Rsponce === 'True') {
         toast.success('OTP sent');
         setShowAadhaar(false);
