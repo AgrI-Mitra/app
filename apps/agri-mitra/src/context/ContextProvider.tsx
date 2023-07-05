@@ -20,6 +20,7 @@ import { io } from 'socket.io-client';
 import { Button } from '@chakra-ui/react';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
+import {UCI} from 'uci_socket'
 
 function loadMessages(locale: string) {
   switch (locale) {
@@ -46,6 +47,12 @@ const ContextProvider: FC<{
   setLocale: any;
   children: ReactElement;
 }> = ({ locale, children, localeMsgs, setLocale }) => {
+
+  const socket = new UCI({ url: URL, token: '', channel: 'akai', deviceId: localStorage.getItem('userID') || '' });
+  console.log("hey", socket)
+
+  
+
   const t = useLocalization();
   const [users, setUsers] = useState<UserType[]>([]);
   const [currentUser, setCurrentUser] = useState<UserType>();
@@ -69,32 +76,32 @@ const ContextProvider: FC<{
   const audioRef = useRef(null);
 
   console.log(messages);
-  useEffect(() => {
-    if (
-      localStorage.getItem('userID')
-      // && localStorage.getItem('auth')
-      //  || isMobileAvailable
-    ) {
-      setNewSocket(
-        io(URL, {
-          transportOptions: {
-            polling: {
-              extraHeaders: {
-                // Authorization: `Bearer ${localStorage.getItem('auth')}`,
-                channel: 'akai',
-              },
-            },
-          },
-          query: {
-            deviceId: localStorage.getItem('userID'),
-          },
-          autoConnect: false,
-          // transports: ['polling', 'websocket'],
-          upgrade: false,
-        })
-      );
-    }
-  }, [isMobileAvailable]);
+  // useEffect(() => {
+  //   if (
+  //     localStorage.getItem('userID')
+  //     // && localStorage.getItem('auth')
+  //     //  || isMobileAvailable
+  //   ) {
+  //     setNewSocket(
+  //       io(URL, {
+  //         transportOptions: {
+  //           polling: {
+  //             extraHeaders: {
+  //               // Authorization: `Bearer ${localStorage.getItem('auth')}`,
+  //               channel: 'akai',
+  //             },
+  //           },
+  //         },
+  //         query: {
+  //           deviceId: localStorage.getItem('userID'),
+  //         },
+  //         autoConnect: false,
+  //         // transports: ['polling', 'websocket'],
+  //         upgrade: false,
+  //       })
+  //     );
+  //   }
+  // }, [isMobileAvailable]);
 
   const updateMsgState = useCallback(
     ({
@@ -221,21 +228,28 @@ const ContextProvider: FC<{
       toast.error(exception?.message);
     }
 
-    if (newSocket) {
-      newSocket.on('connect', onConnect);
-      newSocket.on('disconnect', onDisconnect);
-      newSocket.on('botResponse', onMessageReceived);
-
-      newSocket.on('exception', onException);
-      newSocket.on('session', onSessionCreated);
+    if (socket) {
+      // //@ts-ignore
+      // socket?.on('connect', onConnect);
+      socket?.init();
+      // //@ts-ignore
+      // socket?.on('disconnect', onDisconnect);
+      // //@ts-ignore
+      // socket?.on('botResponse', onMessageReceived);
+      
+      // //@ts-ignore
+      // socket?.on('exception', onException);
+      // //@ts-ignore
+      // socket?.on('session', onSessionCreated);
     }
 
     return () => {
-      if (newSocket) {
-        newSocket.off('disconnect', onDisconnect);
+      if (socket) {
+        //@ts-ignore
+        // socket?.off('disconnect', onDisconnect);
       }
     };
-  }, [isConnected, newSocket, onMessageReceived]);
+  }, [isConnected, socket, onMessageReceived]);
 
   const onChangeCurrentUser = useCallback((newUser: UserType) => {
     setCurrentUser({ ...newUser, active: true });
@@ -280,7 +294,8 @@ const ContextProvider: FC<{
         return;
       }
       //  console.log('mssgs:',messages)
-      send({ text, socketSession, socket: newSocket, conversationId });
+      // send({ text, socketSession, socket: newSocket, conversationId });
+      socket.sendMessage({msg: text, session: socketSession, accessToken: '', to: localStorage.getItem('userID') || ''})
       if (isVisibile)
         if (media) {
           if (media.mimeType.slice(0, 5) === 'image') {
@@ -393,7 +408,7 @@ const ContextProvider: FC<{
       setIsMobileAvailable,
       setConversationId,
       onSocketConnect,
-      newSocket,
+      newSocket:socket,
       isDown,
       fetchIsDown,
       showDialerPopup,
@@ -422,7 +437,7 @@ const ContextProvider: FC<{
       setIsMsgReceiving,
       setConversationId,
       onSocketConnect,
-      newSocket,
+      socket,
       isDown,
       fetchIsDown,
       showDialerPopup,

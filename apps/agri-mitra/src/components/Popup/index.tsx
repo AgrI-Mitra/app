@@ -114,7 +114,7 @@ const Popup = (props: PopupProps) => {
 
       const otpRes = await otpResponse.json();
       console.log(otpRes);
-      if (otpRes.status === 'NOT_OK') {
+      if (false) {
         const errorMsg = otpRes?.d?.output?.Message || otpRes?.error;
         toast.error(errorMsg);
         if (
@@ -166,7 +166,7 @@ const Popup = (props: PopupProps) => {
       ).then(async (response) => {
         const aadhaarRes = await response.json();
         console.log('hey', aadhaarRes);
-        if (aadhaarRes.status === 'OK') {
+        if (aadhaarRes.status === 'NOT_OK') {
           toast.success('OTP sent');
           setShowAadhaar(false);
           setShowOtp(true);
@@ -199,7 +199,7 @@ const Popup = (props: PopupProps) => {
         .then((response) => response.json())
         .then((data) => {
           // console.log('token:', { data });
-          if (data.status === 'OK') {
+          if (data.status === 'NOT_OK') {
             //   let expires = new Date();
             //   expires.setTime(
             //     expires.getTime() +
