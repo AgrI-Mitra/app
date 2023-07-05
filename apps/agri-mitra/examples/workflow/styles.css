@@ -1,0 +1,125 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+nav{
+  padding: 1vh;
+  height: 4vh;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dropbtn{
+  padding: 10px 20px;
+}
+
+#heading{
+  font-weight: 700;
+  color: #4CAF50;
+  font-size: 5vw;
+}
+
+#logos{
+  display: flex;
+}
+
+/* Dropdown Styles */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+}
+
+.dropdown-content a {
+  color: #000;
+  text-decoration: none;
+  display: block;
+  padding: 6px 0;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.show {
+  display: block;
+}
+
+
+#chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 94vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#message-container {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.message {
+  background-color: #f1f1f1;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 5px;
+  font-size: 28px;
+}
+
+#input-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+#record-button{
+  margin-right: 8px;
+  width: 75px;
+  height: 75px;
+}
+
+#message-input {
+  flex: 0.85;
+  padding: 10px;
+  height: 110px;
+  font-size: 28px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#send-button {
+  height: 110px;
+  font-size: 28px;
+  flex: 0.15;
+  margin-left: 10px;
+  padding: 5px 10px;
+  border: none;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+#send-button:hover {
+  background-color: #45a049;
+}
