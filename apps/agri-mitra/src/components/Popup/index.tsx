@@ -158,6 +158,7 @@ const Popup = (props: PopupProps) => {
       //   const res = await response.json();
       //   // if mapped to a phone number then only send otp
       //   if (res.status) {
+
       fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/user/sendotp/${input + aadhaar}`,
         {
