@@ -69,55 +69,73 @@ const Popup = (props: PopupProps) => {
     };
   }, [isResendingOTP, t, input, countdownIntervalId]);
 
-  const handleSend = () => {
-    // if (router.pathname === '/') {
-    // check whether to ask for aadhaar 4 digits or not
-    sessionStorage.setItem('identifier', input);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/user/linkedBeneficiaryIdsCount/${input}`,
-      { method: 'GET' }
-    ).then(async (response) => {
-      const res = await response.json();
-      console.log(res);
-      if (res.status === 'OK') {
-        // If beneficiary ID count is zero then wrong value entered
-        if (res.beneficiaryIdCount === 0) {
-          if (res.type === 'phoneNumber') {
-            toast.error(
-              'Dear user, we are unable to find the requested phone number. Please check the input.'
-            );
-          } else if (res.type === 'aadhaar') {
-            toast.error(
-              'Dear user, we are unable to find the requested Aadhaar number. Please check the input.'
-            );
-          } else if (res.type === 'beneficiaryId') {
-            toast.error(
-              'Dear user, we are unable to find the requested Beneficiary ID. Please check the input.'
-            );
-          }
-          // if more than one beneficiary ID then ask for aadhaar digits
-        } else if (res.beneficiaryIdCount > 1 && res.type === 'phoneNumber') {
+  const handleSend = async () => {
+    try {
+      sessionStorage.setItem('identifier', input);
+      // const response = await fetch(
+      //   `${process.env.NEXT_PUBLIC_BASE_URL}/user/linkedBeneficiaryIdsCount/${input}`,
+      //   {
+      //     method: 'GET',
+      //   }
+      // );
+
+      // if (!response.ok) {
+      //   toast.error(response.statusText);
+      // }
+
+      // const res = await response.json();
+      // console.log(res);
+
+      // if (res.status === 'OK') {
+      //   if (res.beneficiaryIdCount === 0) {
+      //     if (res.type === 'phoneNumber') {
+      //       toast.error(
+      //         'Dear user, we are unable to find the requested phone number. Please check the input.'
+      //       );
+      //     } else if (res.type === 'aadhaar') {
+      //       toast.error(
+      //         'Dear user, we are unable to find the requested Aadhaar number. Please check the input.'
+      //       );
+      //     } else if (res.type === 'beneficiaryId') {
+      //       toast.error(
+      //         'Dear user, we are unable to find the requested Beneficiary ID. Please check the input.'
+      //       );
+      //     }
+      //   } else if (res.beneficiaryIdCount > 1 && res.type === 'phoneNumber') {
+      //     setShowInput(false);
+      //     setShowAadhaar(true);
+      //   } else {
+      const otpResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/user/sendotp/${input}`,
+        {
+          method: 'GET',
+        }
+      );
+
+      const otpRes = await otpResponse.json();
+      console.log(otpRes);
+      if (otpRes.status === 'NOT_OK') {
+        const errorMsg = otpRes?.d?.output?.Message || otpRes?.error;
+        toast.error(errorMsg);
+        if (
+          otpRes.d.output.Message ===
+          'This mobile number taged with multiple records.'
+        ) {
           setShowInput(false);
           setShowAadhaar(true);
-          // if exactly one beneficiary ID then send otp
-        } else {
-          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/sendotp/${input}`, {
-            method: 'GET',
-          }).then((response) => {
-            if (response.status === 200) {
-              toast.success('OTP sent');
-              setShowInput(false);
-              setShowOtp(true);
-            } else {
-              toast.error(`${t('message.otp_not_sent')}`);
-            }
-          });
         }
       } else {
-        toast.error(res.error);
+        toast.success('OTP sent');
+        setShowInput(false);
+        setShowOtp(true);
       }
-    });
-    // }
+      // }
+      // } else {
+      //   toast.error(res.error);
+      // }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleClose = () => {
@@ -133,31 +151,38 @@ const Popup = (props: PopupProps) => {
   const handleAadhaarSubmit = () => {
     // checking if aadhaar is a 4 digit number only
     if (aadhaar.length === 4 && /^\d{4}$/.test(aadhaar)) {
+      // fetch(
+      //   `${process.env.NEXT_PUBLIC_BASE_URL}/user/checkMapping?phoneNo=${input}&maskedAadhaar=${aadhaar}`,
+      //   { method: 'GET' }
+      // ).then(async (response) => {
+      //   const res = await response.json();
+      //   // if mapped to a phone number then only send otp
+      //   if (res.status) {
+
       fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/user/checkMapping?phoneNo=${input}&maskedAadhaar=${aadhaar}`,
-        { method: 'GET' }
+        `${process.env.NEXT_PUBLIC_BASE_URL}/user/sendotp/${input + aadhaar}`,
+        {
+          method: 'GET',
+        }
       ).then(async (response) => {
-        const res = await response.json();
-        // if mapped to a phone number then only send otp
-        if (res.status) {
-          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/sendotp/${input}`, {
-            method: 'GET',
-          }).then((response) => {
-            if (response.status === 200) {
-              toast.success('OTP sent');
-              setShowAadhaar(false);
-              setShowOtp(true);
-            } else {
-              toast.error(`${t('message.otp_not_sent')}`);
-            }
-          });
+        const aadhaarRes = await response.json();
+        console.log('hey', aadhaarRes);
+        if (aadhaarRes.status === 'OK') {
+          toast.success('OTP sent');
+          setShowAadhaar(false);
+          setShowOtp(true);
         } else {
-          toast.error('Phone number not found');
+          // toast.error(`${t('message.otp_not_sent')}`);
+          toast.error(aadhaarRes.d.output.Message);
         }
       });
     } else {
-      toast.error('Please enter last 4 digits of your Aadhaar.');
+      toast.error('Phone number not found');
     }
+    //   });
+    // } else {
+    //   toast.error('Please enter last 4 digits of your Aadhaar.');
+    // }
   };
 
   const handleOTPSubmit = () => {
