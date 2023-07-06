@@ -225,7 +225,7 @@ const RenderVoiceRecorder = ( props ) => {
         case 'te':
           return '6411748db1463435d2fbaec5';
         default:
-          return '63ee09c3b95268521c70cd7c';
+          return '6387b54086369150cb004351';
       }
     };
     const modelId_TRANSLATION = () => {
