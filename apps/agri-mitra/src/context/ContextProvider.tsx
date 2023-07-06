@@ -20,7 +20,7 @@ import { io } from 'socket.io-client';
 import { Button } from '@chakra-ui/react';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
-import {UCI} from 'uci_socket'
+import { UCI } from 'uci_socket';
 
 function loadMessages(locale: string) {
   switch (locale) {
@@ -47,11 +47,18 @@ const ContextProvider: FC<{
   setLocale: any;
   children: ReactElement;
 }> = ({ locale, children, localeMsgs, setLocale }) => {
-
-  const socket = new UCI({ url: URL, token: '', channel: 'akai', deviceId: localStorage.getItem('userID') || '' });
-  console.log("hey", socket)
-
-  
+  const socket = useMemo(
+    () =>
+      new UCI({
+        url: URL,
+        token:
+          'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjRwSFNCOUYteGw5OGZLSnJ0LVEyVDV6UjQ3cyJ9.eyJhdWQiOiIzMjBiMDIwYS0zZDg0LTRkOGEtYTE5MS1kYTRlOTcyYzI5NTEiLCJleHAiOjE3MTc1MTQ2NDcsImlhdCI6MTY4NTk3ODY0NywiaXNzIjoiYWNtZS5jb20iLCJzdWIiOiIxNjNlM2RjMy1iOTYyLTQ0MzQtODMyNy00M2EwOGU0OTJkNzYiLCJqdGkiOiJhNTc4ZTkwNC0zZTU1LTRmYTgtYTI3OC1mMTYyODM2ZmQwZWMiLCJhdXRoZW50aWNhdGlvblR5cGUiOiJSRUZSRVNIX1RPS0VOIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiODc2NzQ0NzQxNiIsImFwcGxpY2F0aW9uSWQiOiIzMjBiMDIwYS0zZDg0LTRkOGEtYTE5MS1kYTRlOTcyYzI5NTEiLCJ0aWQiOiIwMTA1NjZmZC1lMWNiLWM2NTgtYjY1OS1hMWQzZTA3MGJhYTgiLCJyb2xlcyI6W10sImF1dGhfdGltZSI6MTY4NTk3MDc3Miwic2lkIjoiYTQ2ZmJhNDgtYWExOC00YWRkLTgwY2ItZGJhM2IxYTEzMTkxIiwiaHR0cHM6Ly9oYXN1cmEuaW8vand0L2NsYWltcyI6eyJ4LWhhc3VyYS1hbGxvd2VkLXJvbGVzIjpbIk9wZW5Sb2xlIiwiRElFVCIsIm1hbmF2X3NhbXBhZGEiXSwieC1oYXN1cmEtZGVmYXVsdC1yb2xlIjoiRElFVCIsIlgtSGFzdXJhLVVzZXItSWQiOiI4NzY3NDQ3NDE2In0sImFwaVJvbGVzIjpbIkRJRVQiXX0.FL_nnEdHh97tLy5y6RnfTYxwHPkfMstgeRyF1yXp_YHz5ooVwZ6Egnb4BovLFShB7RU1HHF5RanpXxpKtwlpdO8Z43C6yJ-nVOA1rzUiaduYnnE5yq9PHs8ZDMpdMegmm0lPw4n023rSx5sf8lE6cwLPFpx3jIDytI4gHyVyGOt3Yfm8CpqcTXawR59BLnY4HXmL0rJCtvkyTGKNR0HoKmupsk3GS1FxD6deEPoR2luQaEpGqAzOSx155sf8vvRD292q1BjGE8X3SG-bXF9qcT5P6oUq_FitxXfRuto-APkQJvbm1iqsLNVkVC_LHYkswU0wZRBVX5LPn7UFtZeA',
+        channel: 'nlpwa',
+        deviceId: 'nlpwa:8767447416',
+      }),
+    []
+  );
+  console.log('vbn: ', socket);
 
   const t = useLocalization();
   const [users, setUsers] = useState<UserType[]>([]);
@@ -69,7 +76,9 @@ const ContextProvider: FC<{
   );
   const [isDown, setIsDown] = useState(true);
   const [showDialerPopup, setShowDialerPopup] = useState(false);
-  const [isConnected, setIsConnected] = useState(newSocket?.connected || false);
+  const [isConnected, setIsConnected] = useState(
+    socket?.socket?.connected || false
+  );
   const [showPopUp, setShowPopUp] = useState(false);
   const [cookie, setCookie, removeCookie] = useCookies();
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
@@ -189,30 +198,33 @@ const ContextProvider: FC<{
     ({ text }: { text: string }): void => {
       setIsConnected(false);
       setTimeout(() => {
-        newSocket?.connect();
+        // newSocket?.connect();
+        socket?.init();
         setIsConnected(true);
       }, 30);
 
       setTimeout(() => {
-        if (newSocket?.connected) sendMessage(text, null);
+        if (socket?.socket?.connected) sendMessage(text, null);
       }, 40);
-      //@ts-ignore
     },
-    [newSocket, sendMessage]
+    //@ts-ignore
+    [socket, sendMessage]
   );
 
   useEffect(() => {
     if (
-      (!isConnected && newSocket && !newSocket.connected) ||
-      (newSocket && !newSocket.connected)
+      (!isConnected && socket && !socket?.socket?.connected) ||
+      (socket && !socket?.socket?.socketconnected)
     ) {
-      newSocket.connect();
+      // newSocket.connect();
+      socket?.init();
       setIsConnected(true);
     }
-  }, [isConnected, newSocket]);
+  }, [isConnected, socket]);
 
   useEffect(() => {
     function onConnect(): void {
+      console.log('vbn: aagya');
       setIsConnected(true);
     }
 
@@ -221,6 +233,7 @@ const ContextProvider: FC<{
     }
 
     function onSessionCreated(sessionArg: { session: any }) {
+      console.log('vbn: s', { sessionArg });
       setSocketSession(sessionArg);
     }
 
@@ -228,27 +241,26 @@ const ContextProvider: FC<{
       toast.error(exception?.message);
     }
 
-    if (socket) {
-      // //@ts-ignore
-      // socket?.on('connect', onConnect);
-      socket?.init();
-      // //@ts-ignore
-      // socket?.on('disconnect', onDisconnect);
-      // //@ts-ignore
-      // socket?.on('botResponse', onMessageReceived);
-      
-      // //@ts-ignore
-      // socket?.on('exception', onException);
-      // //@ts-ignore
-      // socket?.on('session', onSessionCreated);
+    if (socket && !socket.socket.connected) {
+      //@ts-ignore
+      socket?.socket?.on('connect', onConnect);
+      //@ts-ignore
+      socket?.socket?.on('disconnect', onDisconnect);
+      //@ts-ignore
+      socket?.socket?.on('botResponse', onMessageReceived);
+
+      //@ts-ignore
+      socket?.socket?.on('exception', onException);
+      //@ts-ignore
+      socket?.socket?.on('session', onSessionCreated);
     }
 
-    return () => {
-      if (socket) {
-        //@ts-ignore
-        // socket?.off('disconnect', onDisconnect);
-      }
-    };
+    // return () => {
+    //   if (socket && socket.socket.connected) {
+    //     //@ts-ignore
+    //     socket?.socket?.off('disconnect', onDisconnect);
+    //   }
+    // };
   }, [isConnected, socket, onMessageReceived]);
 
   const onChangeCurrentUser = useCallback((newUser: UserType) => {
@@ -272,7 +284,7 @@ const ContextProvider: FC<{
       setLoading(true);
       setIsMsgReceiving(true);
 
-      if (!newSocket?.connected || !socketSession) {
+      if (!socket?.socket?.connected) {
         toast(
           (to) => (
             <span>
@@ -295,7 +307,12 @@ const ContextProvider: FC<{
       }
       //  console.log('mssgs:',messages)
       // send({ text, socketSession, socket: newSocket, conversationId });
-      socket.sendMessage({msg: text, session: socketSession, accessToken: '', to: localStorage.getItem('userID') || ''})
+      socket.sendMessage({
+        msg: text,
+        session: socketSession,
+        accessToken: '',
+        to: localStorage.getItem('userID') || '',
+      });
       if (isVisibile)
         if (media) {
           if (media.mimeType.slice(0, 5) === 'image') {
@@ -360,7 +377,7 @@ const ContextProvider: FC<{
 
   console.log('vbn: aa', {
     socketSession,
-    newSocket,
+    newSocket: socket.socket,
     isConnected,
     isMobileAvailable,
   });
@@ -408,7 +425,7 @@ const ContextProvider: FC<{
       setIsMobileAvailable,
       setConversationId,
       onSocketConnect,
-      newSocket:socket,
+      newSocket: socket,
       isDown,
       fetchIsDown,
       showDialerPopup,
