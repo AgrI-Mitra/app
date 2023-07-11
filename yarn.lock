@@ -18004,11 +18004,13 @@ typedarray@^0.0.6:
 "typescript@^3 || ^4", typescript@^4.5.3, "typescript@^4.6.4 || ^5.0.0", typescript@^4.7.3, typescript@^4.7.4, typescript@4.7.4:
   version "4.7.4"
 
-"uci_socket@file:../../uci_socket":
+"uci_sdk@file:../../uci_sdk":
   version "0.1.0"
-  resolved "file:../../uci_socket"
+  resolved "file:../../uci_sdk"
   dependencies:
+    react-hot-toast "^2.4.1"
     socket.io-client "^4.7.1"
+    uuid "^9.0.0"
 
 uglify-js@^3.1.4:
   version "3.17.4"

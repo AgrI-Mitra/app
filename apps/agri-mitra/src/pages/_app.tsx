@@ -1,8 +1,15 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { ChakraProvider } from '@chakra-ui/react';
-import ContextProvider from '../context/ContextProvider';
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+// import ContextProvider from '../context/ContextProvider';
+import { useSocketContext, ContextProvider } from 'uci_sdk';
+import React, {
+  ReactElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import 'chatui/dist/index.css';
 import { Toaster } from 'react-hot-toast';
 import { useCookies } from 'react-cookie';
@@ -56,7 +63,6 @@ const App = ({ Component, pageProps }: AppProps) => {
     })();
   }, []);
 
-
   // const handleLoginRedirect = useCallback(() => {
   //   if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
   //     // already logged in then send to home
@@ -92,15 +98,21 @@ const App = ({ Component, pageProps }: AppProps) => {
   } else {
     return (
       <ChakraProvider>
-          <ContextProvider>
-            <div style={{ height: '100%' }}>
-              <Toaster position="top-center" reverseOrder={false} />
-              <NavBar />
-              <SafeHydrate>
-                <Component {...pageProps} />
-              </SafeHydrate>
-            </div>
-          </ContextProvider>
+        <ContextProvider
+          deviceId={localStorage.getItem('userID') || ''}
+          uuId={localStorage.getItem('userID') || ''}
+          URL={process.env.NEXT_PUBLIC_SOCKET_URL || ''}
+          onMsgReceived={(msg: any) => console.log(msg)}>
+
+          <div style={{ height: '100%' }}>
+            <Toaster position="top-center" reverseOrder={false} />
+            <NavBar />
+            <SafeHydrate>
+              <Component {...pageProps} />
+            </SafeHydrate>
+          </div>
+
+        </ContextProvider>
       </ChakraProvider>
     );
   }
