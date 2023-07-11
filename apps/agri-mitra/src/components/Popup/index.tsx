@@ -71,7 +71,7 @@ const Popup = (props: PopupProps) => {
 
   const handleSend = async () => {
     try {
-      sessionStorage.setItem('identifier', input);
+      sessionStorage.setItem('identifier', input+(aadhaar.length>0?aadhaar:''));
       // const response = await fetch(
       //   `${process.env.NEXT_PUBLIC_BASE_URL}/user/linkedBeneficiaryIdsCount/${input}`,
       //   {
@@ -151,6 +151,7 @@ const Popup = (props: PopupProps) => {
   const handleAadhaarSubmit = () => {
     // checking if aadhaar is a 4 digit number only
     if (aadhaar.length === 4 && /^\d{4}$/.test(aadhaar)) {
+      sessionStorage.setItem('identifier', input+(aadhaar.length>0?aadhaar:''));
       // fetch(
       //   `${process.env.NEXT_PUBLIC_BASE_URL}/user/checkMapping?phoneNo=${input}&maskedAadhaar=${aadhaar}`,
       //   { method: 'GET' }
