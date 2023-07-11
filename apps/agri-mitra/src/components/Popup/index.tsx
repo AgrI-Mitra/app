@@ -190,7 +190,7 @@ const Popup = (props: PopupProps) => {
       fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/verifyotp`, {
         method: 'POST',
         body: JSON.stringify({
-          identifier: input,
+          identifier: input+(aadhaar.length>0?aadhaar:''),
           otp: otp,
         }),
         headers: {
