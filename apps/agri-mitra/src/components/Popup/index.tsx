@@ -324,7 +324,7 @@ const Popup = (props: PopupProps) => {
           {showInput ? (
             <button onClick={handleSend}>{t('label.send')}</button>
           ) : showOtp ? (
-            <button onClick={handleOTPSubmit}>{t('label.send')}</button>
+            <button onClick={handleOTPSubmit}>{t('label.submit')}</button>
           ) : (
             <button onClick={handleAadhaarSubmit}>{t('label.send')}</button>
           )}
