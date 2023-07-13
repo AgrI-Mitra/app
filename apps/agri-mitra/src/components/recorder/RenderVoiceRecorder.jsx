@@ -303,10 +303,10 @@ const RenderVoiceRecorder = ( props ) => {
                   //   translation: rsp_data.output[0].target,
                   // }));
                 }
-                props.setInputMsg(wordToNumber(rsp_data.output[0].target));
+                props.setInputMsg(wordToNumber(rsp_data?.output?.[0]?.target));
               });
-            } else props.setInputMsg(wordToNumber(rsp_data.data.source));
-          } else props.setInputMsg(rsp_data.data.source);
+            } else props.setInputMsg(wordToNumber(rsp_data?.data?.source));
+          } else props.setInputMsg(rsp_data?.data?.source);
           // setSuggestEditValues((prev) => ({
           //   ...prev,
           //   asr: rsp_data.data.source,

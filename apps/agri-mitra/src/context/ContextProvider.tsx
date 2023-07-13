@@ -67,6 +67,7 @@ const ContextProvider: FC<{
   const [showPopUp, setShowPopUp] = useState(false);
   const [cookie, setCookie, removeCookie] = useCookies();
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [OTPSubmitting, setOTPSubmitting] = useState(false);
   const audioRef = useRef(null);
 
   console.log(messages);
@@ -78,7 +79,7 @@ const ContextProvider: FC<{
     ) {
       setNewSocket(
         io(URL, {
-	  path: '/websocket/socket.io',
+          path: '/websocket/socket.io',
           transportOptions: {
             polling: {
               extraHeaders: {
@@ -171,7 +172,7 @@ const ContextProvider: FC<{
         });
       } else if (msg.content.msg_type.toUpperCase() === 'TEXT') {
         try {
-          if(localStorage.getItem('locale') === 'en'){
+          if (localStorage.getItem('locale') === 'en') {
             setLoading(false);
             updateMsgState({ user, msg, media: {} });
             return;
@@ -192,9 +193,9 @@ const ContextProvider: FC<{
             }
           };
 
-          if(msg.content.split){
+          if (msg.content.split) {
             let titles = msg.content.title.split(`\n`);
-            for(let i=0; i<titles.length; i++){
+            for (let i = 0; i < titles.length; i++) {
               const obj = new ComputeAPI(
                 modelId_TRANSLATION(),
                 titles[i],
@@ -216,7 +217,7 @@ const ContextProvider: FC<{
             msg.content.title = titles.join(`\n`);
             setLoading(false);
             updateMsgState({ user, msg, media: {} });
-          }else{
+          } else {
             const obj = new ComputeAPI(
               modelId_TRANSLATION(),
               msg.content.title,
@@ -346,8 +347,8 @@ const ContextProvider: FC<{
         );
         return;
       }
-        setLoading(true);
-        send({ text, socketSession, socket: newSocket, conversationId });
+      setLoading(true);
+      send({ text, socketSession, socket: newSocket, conversationId });
       //  console.log('mssgs:',messages)
       if (isVisibile)
         if (media) {
@@ -471,6 +472,8 @@ const ContextProvider: FC<{
       isAudioPlaying,
       setIsAudioPlaying,
       audioRef,
+      OTPSubmitting,
+      setOTPSubmitting,
     }),
     [
       locale,
@@ -500,6 +503,8 @@ const ContextProvider: FC<{
       isAudioPlaying,
       setIsAudioPlaying,
       audioRef,
+      OTPSubmitting,
+      setOTPSubmitting,
     ]
   );
 
