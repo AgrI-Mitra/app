@@ -232,13 +232,13 @@ const RenderVoiceRecorder = ( props ) => {
       const lang = localStorage.getItem('locale') || 'en';
       switch (lang) {
         case 'hi':
-          return '63b286b286369150cb004369';
+          return '63b28348ff7cd87a3f7e1029';
         case 'bn':
-          return '6110f7bc014fa35d5e767c3b';
+          return '641d1d818ecee6735a1b37c7';
         case 'ta':
-          return '6110f917014fa35d5e767c4e';
+          return '641d1caa92a6a31751ff1eb6';
         case 'te':
-          return '6110f924014fa35d5e767c4f';
+          return '641d1cab8ecee6735a1b370b';
         default:
           return '63ee09c3b95268521c70cd7c';
       }
