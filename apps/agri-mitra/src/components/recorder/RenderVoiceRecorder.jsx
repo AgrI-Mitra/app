@@ -228,17 +228,18 @@ const RenderVoiceRecorder = ( props ) => {
           return '6387b54086369150cb004351';
       }
     };
+    // converts other languages to english
     const modelId_TRANSLATION = () => {
       const lang = localStorage.getItem('locale') || 'en';
       switch (lang) {
         case 'hi':
-          return '63b28348ff7cd87a3f7e1029';
+          return '641d1cd18ecee6735a1b372a';
         case 'bn':
-          return '641d1d818ecee6735a1b37c7';
+          return '641d1d3e8ecee6735a1b3793';
         case 'ta':
-          return '641d1caa92a6a31751ff1eb6';
+          return '641d1d2d92a6a31751ff1f1d';
         case 'te':
-          return '641d1cab8ecee6735a1b370b';
+          return '641d1ca98ecee6735a1b3707';
         default:
           return '63ee09c3b95268521c70cd7c';
       }
