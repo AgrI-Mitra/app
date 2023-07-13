@@ -224,6 +224,7 @@ const Popup = (props: PopupProps) => {
             context?.sendMessage(props.msg.trim());
             context?.setShowPopUp(false);
             router.push('/chat');
+            context?.setIsSubmitting(false);
           } else {
             toast.error(`${t('message.invalid_otp')}`);
             context?.setIsSubmitting(false);
