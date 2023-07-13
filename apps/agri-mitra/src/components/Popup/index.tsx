@@ -189,11 +189,11 @@ const Popup = (props: PopupProps) => {
   const handleOTPSubmit = () => {
     if (otp.length === 4) {
       // Check if the function is already running
-      if (context?.isSubmitting) {
+      if (context?.OTPSubmitting) {
         return;
       }
 
-      context.setIsSubmitting(true);
+      context.setOTPSubmitting(true);
 
       fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/verifyotp`, {
         method: 'POST',
@@ -224,15 +224,15 @@ const Popup = (props: PopupProps) => {
             context?.sendMessage(props.msg.trim());
             context?.setShowPopUp(false);
             router.push('/chat');
-            context?.setIsSubmitting(false);
+            context?.setOTPSubmitting(false);
           } else {
             toast.error(`${t('message.invalid_otp')}`);
-            context?.setIsSubmitting(false);
+            context?.setOTPSubmitting(false);
           }
         })
         .catch((err) => {
           console.log(err);
-          context?.setIsSubmitting(false);
+          context?.setOTPSubmitting(false);
         });
     }
   };
