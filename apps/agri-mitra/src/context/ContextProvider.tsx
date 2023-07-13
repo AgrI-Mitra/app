@@ -180,7 +180,7 @@ const ContextProvider: FC<{
             const lang = localStorage.getItem('locale') || 'en';
             switch (lang) {
               case 'hi':
-                return '6110f7f7014fa35d5e767c3f';
+                return '63b286b286369150cb004369';
               case 'bn':
                 return '6110f7da014fa35d5e767c3d';
               case 'ta':
