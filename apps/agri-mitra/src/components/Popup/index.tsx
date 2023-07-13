@@ -7,7 +7,6 @@ import axios from 'axios';
 import RenderVoiceRecorder from '../recorder/RenderVoiceRecorder';
 import { useLocalization } from '../../hooks/useLocalization';
 import { FormattedMessage } from 'react-intl';
-import { useCookies } from 'react-cookie';
 import Image from 'next/image';
 import crossIcon from '../../assets/icons/crossIcon.svg';
 
@@ -27,7 +26,6 @@ const Popup = (props: PopupProps) => {
   const [isResendingOTP, setIsResendingOTP] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [countdownIntervalId, setCountdownIntervalId] = useState<any>(null);
-  const [cookies, setCookie, removeCookie] = useCookies(['access_token']);
 
   const resendOTP = useCallback(async () => {
     if (isResendingOTP) {
@@ -38,7 +36,7 @@ const Popup = (props: PopupProps) => {
     setIsResendingOTP(true);
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/user/sendotp/${input}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/user/sendotp/${input+(aadhaar.length>0?aadhaar:'')}`
       );
       if (response.status === 200) {
         toast.success(`${t('message.otp_sent_again')}`);
@@ -67,7 +65,7 @@ const Popup = (props: PopupProps) => {
         clearInterval(countdownIntervalId);
       }
     };
-  }, [isResendingOTP, t, input, countdownIntervalId]);
+  }, [isResendingOTP, t, input, countdownIntervalId, aadhaar]);
 
   const handleSend = async () => {
     try {
@@ -116,13 +114,15 @@ const Popup = (props: PopupProps) => {
       console.log(otpRes);
       if (otpRes.status === 'NOT_OK') {
         const errorMsg = otpRes?.d?.output?.Message || otpRes?.error;
-        toast.error(errorMsg);
         if (
-          otpRes.d.output.Message ===
+          errorMsg ===
           'This mobile number taged with multiple records.'
         ) {
+          toast.error(errorMsg);
           setShowInput(false);
           setShowAadhaar(true);
+        }else{
+          toast.error(`${t('error.userid_not_registered')}`);
         }
       } else {
         toast.success('OTP sent');
