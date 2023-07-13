@@ -217,7 +217,7 @@ const RenderVoiceRecorder = ( props ) => {
       const lang = localStorage.getItem('locale') || 'en';
       switch (lang) {
         case 'hi':
-          return '64117455b1463435d2fbaec4';
+          return '648025f27cdd753e77f461a9';
         case 'bn':
           return '6411746956e9de23f65b5426';
         case 'ta':
