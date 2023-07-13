@@ -192,7 +192,7 @@ const ContextProvider: FC<{
                 return '63ee09c3b95268521c70cd7c';
             }
           };
-
+          
           if (msg.content.split) {
             let titles = msg.content.title.split(`\n`);
             for (let i = 0; i < titles.length; i++) {
