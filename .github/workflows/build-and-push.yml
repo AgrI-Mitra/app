@@ -38,6 +38,8 @@ jobs:
         with:
           build-args: |
             "SERVER_RELEASE_VERSION=${{ github.sha }}"
+            "NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}"
+            "NEXT_PUBLIC_SOCKET_URL=${{ secrets.NEXT_PUBLIC_SOCKET_URL }}"
           context: .
           push: true
           cache-from: type=gha
