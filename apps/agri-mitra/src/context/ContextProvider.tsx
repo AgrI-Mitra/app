@@ -177,6 +177,7 @@ const ContextProvider: FC<{
             updateMsgState({ user, msg, media: {} });
             return;
           }
+          // converts english messages from socket to other languages
           const modelId_TRANSLATION = () => {
             const lang = localStorage.getItem('locale') || 'en';
             switch (lang) {
