@@ -78,6 +78,7 @@ const ContextProvider: FC<{
     ) {
       setNewSocket(
         io(URL, {
+	  path: '/websocket/socket.io',
           transportOptions: {
             polling: {
               extraHeaders: {
