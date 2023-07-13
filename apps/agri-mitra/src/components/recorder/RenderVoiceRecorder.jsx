@@ -232,7 +232,7 @@ const RenderVoiceRecorder = ( props ) => {
       const lang = localStorage.getItem('locale') || 'en';
       switch (lang) {
         case 'hi':
-          return '6110f8b7014fa35d5e767c48';
+          return '63b286b286369150cb004369';
         case 'bn':
           return '6110f7bc014fa35d5e767c3b';
         case 'ta':
@@ -272,8 +272,8 @@ const RenderVoiceRecorder = ( props ) => {
       .then(async (resp) => {
         let rsp_data = await resp.json();
         if (resp.ok && rsp_data !== null) {
-          console.log("hi", rsp_data.data.source);
-          console.log("hi", props.wordToNumber);
+          // console.log("hi", rsp_data.data.source);
+          // console.log("hi", props.wordToNumber);
           if (props.wordToNumber) {
             // translating other language words to english words
             if (localStorage.getItem('locale') && localStorage.getItem('locale') !== 'en') {
@@ -292,7 +292,7 @@ const RenderVoiceRecorder = ( props ) => {
                 headers: obj.getHeaders().headers,
               }).then(async (translationResp) => {
                 let rsp_data = await translationResp.json();
-                console.log("hi", wordToNumber(rsp_data.output[0].target))
+                // console.log("hi", wordToNumber(rsp_data.output[0].target))
                 if (translationResp.ok) {
                   // setOutput((prev) => ({
                   //   ...prev,
@@ -303,10 +303,10 @@ const RenderVoiceRecorder = ( props ) => {
                   //   translation: rsp_data.output[0].target,
                   // }));
                 }
-                props.setInputMsg(wordToNumber(rsp_data.output[0].target));
+                props.setInputMsg(wordToNumber(rsp_data?.output?.[0]?.target));
               });
-            } else props.setInputMsg(wordToNumber(rsp_data.data.source));
-          } else props.setInputMsg(rsp_data.data.source);
+            } else props.setInputMsg(wordToNumber(rsp_data?.data?.source));
+          } else props.setInputMsg(rsp_data?.data?.source);
           // setSuggestEditValues((prev) => ({
           //   ...prev,
           //   asr: rsp_data.data.source,
