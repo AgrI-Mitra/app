@@ -5,11 +5,9 @@ import ContextProvider from '../context/ContextProvider';
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import 'chatui/dist/index.css';
 import { Toaster } from 'react-hot-toast';
-import { useCookies } from 'react-cookie';
-import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { useLogin } from '../hooks';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import { IntlProvider } from 'react-intl';
 
 const LaunchPage = dynamic(() => import('../components/LaunchPage'), {
   ssr: false,
@@ -26,10 +24,44 @@ function SafeHydrate({ children }: { children: ReactElement }) {
 }
 
 const App = ({ Component, pageProps }: AppProps) => {
-  const router = useRouter();
-  const { isAuthenticated, login } = useLogin();
   const [launch, setLaunch] = useState(true);
-  const [cookie, setCookie, removeCookie] = useCookies();
+  const [locale, setLocale] = useState('en');
+  const [localeMsgs, setLocaleMsgs] = useState<Record<string, string> | null>(
+    null
+  );
+
+  function loadMessages(locale: string) {
+    switch (locale) {
+      case 'en':
+        return import('../../lang/en.json');
+      case 'hi':
+        return import('../../lang/hi.json');
+      case 'bn':
+        return import('../../lang/bn.json');
+      case 'ta':
+        return import('../../lang/ta.json');
+      case 'te':
+        return import('../../lang/te.json');
+      default:
+        return import('../../lang/en.json');
+    }
+  }
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedLocale = localStorage.getItem('locale');
+      if (savedLocale) {
+        setLocale(savedLocale);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (locale) {
+      //@ts-ignore
+      loadMessages(locale).then((res) => setLocaleMsgs(res));
+    }
+  }, [locale]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -57,50 +89,29 @@ const App = ({ Component, pageProps }: AppProps) => {
   }, []);
 
 
-  // const handleLoginRedirect = useCallback(() => {
-  //   if (router.pathname === '/login' || router.pathname.startsWith('/otp')) {
-  //     // already logged in then send to home
-  //     if (cookie['access_token'] && localStorage.getItem('userID')) {
-  //       router.push('/');
-  //     }
-  //   } else {
-  //     // not logged in then send to login page
-  //     if (!cookie['access_token'] || !localStorage.getItem('userID')) {
-  //       localStorage.clear();
-  //       sessionStorage.clear();
-  //       router.push('/login');
-  //     }
-  //   }
-  // }, [cookie, router]);
-
-  // useEffect(() => {
-  //   handleLoginRedirect();
-  // }, [handleLoginRedirect]);
-
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     login();
-  //   }
-  // }, [isAuthenticated, login]);
-
   if (process.env.NODE_ENV === 'production') {
     globalThis.console.log = () => {};
   }
 
   if (launch) {
-    return <LaunchPage />;
+    return (
+      //@ts-ignore
+      <IntlProvider locale="en" messages={localeMsgs}>
+        <LaunchPage />
+      </IntlProvider>
+    );
   } else {
     return (
       <ChakraProvider>
-          <ContextProvider>
-            <div style={{ height: '100%' }}>
-              <Toaster position="top-center" reverseOrder={false} />
-              <NavBar />
-              <SafeHydrate>
-                <Component {...pageProps} />
-              </SafeHydrate>
-            </div>
-          </ContextProvider>
+        <ContextProvider>
+          <div style={{ height: '100%' }}>
+            <Toaster position="top-center" reverseOrder={false} />
+            <NavBar />
+            <SafeHydrate>
+              <Component {...pageProps} />
+            </SafeHydrate>
+          </div>
+        </ContextProvider>
       </ChakraProvider>
     );
   }
