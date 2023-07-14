@@ -14,7 +14,7 @@ function LaunchPage() {
               width={235}
               height={235}
             />
-            <span>{t('label.title')}</span>
+            <span>{t('label.splash_title')}</span>
     </div>
   )
 }
