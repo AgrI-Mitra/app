@@ -1,8 +1,10 @@
 import styles from './index.module.css';
 import Logo from "../../assets/images/MOA_logo.png";
 import Image from "next/image";
+import { useLocalization } from '../../hooks';
 
 function LaunchPage() {
+  const t = useLocalization();
   return (
     <div className={`${styles.container}`}>
       <Image
@@ -12,7 +14,7 @@ function LaunchPage() {
               width={235}
               height={235}
             />
-            <span>AgrI-Mitra</span>
+            <span>{t('label.splash_title')}</span>
     </div>
   )
 }
