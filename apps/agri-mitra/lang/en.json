@@ -24,7 +24,7 @@
   "label.new_chat": "New chat",
   "label.confirm_delete": "Are you sure you want to delete this conversation?",
   "label.no_history": "No Chats",
-  "label.popUpTitle": "Dear Beneficiery, Thank for reaching out to us with your query. In order to provide you with the correct resolution, we kindly request you to provide us with your Aadhaar Number / Beneficiary ID / Phone no.",
+  "label.popUpTitle": "Dear Beneficiary, Thank for reaching out to us with your query. In order to provide you with the correct resolution, we kindly request you to provide us with your Aadhaar Number / PM KISAN ID / Phone no.",
   "label.popUpTitle2": "Enter your last 4 digits of Aadhaar",
   "label.popUpTitle3": "Enter Beneficiery, request you to kindly enter the OTP that has been received by you",
   "message.example_ques_one": "Where is my money?",
